@@ -1,0 +1,10 @@
+version: '3'
+
+services:
+  db:
+    container_name: employee_management_system_db
+    image: postgis/postgis
+    ports:
+      - 6000:5432
+    environment:
+      POSTGRES_PASSWORD: password123
