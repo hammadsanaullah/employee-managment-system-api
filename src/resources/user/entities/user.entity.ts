@@ -49,6 +49,9 @@ export class User extends EntityBase {
   @Column({ default: false, nullable: true })
   checkedIn: boolean;
 
+  @Column({ nullable: true })
+  imageUrl: string;
+
   @VersionColumn()
   update: number;
 

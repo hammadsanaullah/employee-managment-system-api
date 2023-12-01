@@ -25,6 +25,8 @@ import { SignInAdminDto } from './dto/sign-in-admin.dto';
 import { CreateEmployeeDto } from './dto/create-new-employee';
 import { User } from '../user/entities/user.entity';
 import { UpdateEmployeeDto } from './dto/update-employee';
+import { CloudinaryService } from '../../shared/services/cloudinary/cloudinary.service';
+import { UploadApiResponse } from 'cloudinary';
 
 @Injectable()
 export class AdminService {
@@ -32,6 +34,7 @@ export class AdminService {
     private readonly queryRunner: QueryRunnerService,
     private readonly jwt: JwtService,
     private readonly passwordHelper: PasswordHelperService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   logger = new Logger(AdminService.name);
@@ -161,7 +164,7 @@ export class AdminService {
     await queryRunner.connect();
     try {
       await queryRunner.startTransaction();
-      const { company, companyTitle, ...rest } = createEmployeeDto;
+      const { picture, company, companyTitle, ...rest } = createEmployeeDto;
       const userRepo = queryRunner.manager.getRepository(User);
 
       if (company === Company.INTERNAL && companyTitle) {
@@ -169,9 +172,14 @@ export class AdminService {
           "Can't provide companyTitle if employee is INTERNAL",
         );
       }
+      const result = (await this.cloudinaryService.upload(
+        picture,
+      )) as UploadApiResponse;
+
       const user = await userRepo.save({
         company,
         companyTitle,
+        imageUrl: result.secure_url,
         ...rest,
       });
 

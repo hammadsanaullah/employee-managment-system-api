@@ -69,6 +69,40 @@ export class UserService {
     }
   }
 
+  async findOneById(id: number): Promise<ResponseDto> {
+    try {
+      const userRepo = this.queryRunner.manager.getRepository(User);
+      const user = await userRepo.findOne({
+        where: { id, deletedAt: null },
+      });
+
+      return {
+        message: COMMON_MESSAGE.SUCCESSFULLY_GET(User.name),
+        data: user,
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  async findAll(): Promise<ResponseDto> {
+    try {
+      const userRepo = this.queryRunner.manager.getRepository(User);
+      const users = await userRepo.find({
+        where: { deletedAt: null },
+      });
+
+      return {
+        message: COMMON_MESSAGE.SUCCESSFULLY_GET(User.name),
+        data: users,
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
   // private getMonthString(monthIndex: number): string {
   //   // Convert month index to month string (e.g., 0 -> 'January', 1 -> 'February', etc.)
   //   const months = [

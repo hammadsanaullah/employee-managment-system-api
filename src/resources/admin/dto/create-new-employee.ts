@@ -13,6 +13,9 @@ import {
 import { Company } from '../../../utils/constants';
 
 export class CreateEmployeeDto {
+  @ApiProperty({ type: 'string', format: 'binary', required: true })
+  picture: Express.Multer.File;
+
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
@@ -56,7 +59,6 @@ export class CreateEmployeeDto {
   //   locationId: number;
 
   @ApiProperty({ required: true })
-  @IsNumber()
   @IsNotEmpty()
   noOfLeaves: number;
 

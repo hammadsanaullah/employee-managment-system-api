@@ -36,14 +36,28 @@ export class UserController {
   //   return this.userService.toggleCheckInOrCheckOut(toggleDto);
   // }
 
+  @Get()
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  find() {
+    return this.userService.findAll();
+  }
+
+  @Get('/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  findOneById(@Param('id') id: number) {
+    return this.userService.findOneById(id);
+  }
+
   @Get('/by-role/:role')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  find(@Param('role') role: string) {
+  findByRole(@Param('role') role: string) {
     return this.userService.find(role);
   }
 
-  @Get('/:barCode')
+  @Get('/by-barcode/:barCode')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
   findOne(@Param('barCode') barCode: string) {

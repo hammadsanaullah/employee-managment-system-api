@@ -1,11 +1,19 @@
-import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  UseGuards,
+  UseInterceptors,
+  UploadedFile,
+} from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiConsumes, ApiTags } from '@nestjs/swagger';
 import { SignInAdminDto } from './dto/sign-in-admin.dto';
 import { CreateEmployeeDto } from './dto/create-new-employee';
 import { JwtAuthGuard } from '../../shared/guards/jwt.guard';
 import { UpdateEmployeeDto } from './dto/update-employee';
+import { FileInterceptor } from '@nestjs/platform-express';
 
 @ApiTags('admin')
 @Controller('admin')
@@ -25,7 +33,13 @@ export class AdminController {
   @Post('create-new-employee')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  createNewEmployee(@Body() createEmployeeDto: CreateEmployeeDto) {
+  @UseInterceptors(FileInterceptor('picture'))
+  @ApiConsumes('multipart/form-data')
+  createNewEmployee(
+    @UploadedFile() picture: Express.Multer.File,
+    @Body() createEmployeeDto: CreateEmployeeDto,
+  ) {
+    createEmployeeDto.picture = picture;
     return this.adminService.createEmployee(createEmployeeDto);
   }
 
