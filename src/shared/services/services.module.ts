@@ -7,6 +7,7 @@ import { PasswordHelperService } from './password-helper/password-helper.service
 // import { HelpersService } from './helpers/helpers.service';
 import { HttpModule } from '@nestjs/axios';
 import { ScheduledJobsService } from './scheduled-jobs/scheduled-jobs.service';
+import { CloudinaryService } from './cloudinary/cloudinary.service';
 @Module({
   imports: [HttpModule],
   providers: [
@@ -15,9 +16,10 @@ import { ScheduledJobsService } from './scheduled-jobs/scheduled-jobs.service';
     // OtpService,
     PasswordHelperService,
     ScheduledJobsService,
+    CloudinaryService,
     // StorageClientService,
     // HelpersService
   ],
-  exports: [QueryRunnerService],
+  exports: [QueryRunnerService, CloudinaryService],
 })
 export class ServicesModule {}
