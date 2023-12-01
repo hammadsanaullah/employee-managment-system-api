@@ -1,16 +1,23 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsPositive, IsInt, IsNotEmpty, IsArray } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsInt,
+  IsNotEmpty,
+  IsArray,
+} from 'class-validator';
 
 export class TimesheetDto {
   @ApiProperty({
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   userId: number;
 
   @ApiProperty({
     required: false,
-    type: [Number]
+    type: [Number],
   })
   // @IsArray()
   @IsOptional()
@@ -18,25 +25,25 @@ export class TimesheetDto {
   siteIds: number[];
 
   @ApiProperty({
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   year: number;
 
   @ApiProperty({
-    required: false
+    required: false,
   })
   @IsOptional()
   month?: number;
 
   @ApiProperty({
-    required: false
+    required: false,
   })
   @IsOptional()
   week?: number;
 
   @ApiProperty({
-    required: false
+    required: false,
   })
   @IsOptional()
   day?: number;

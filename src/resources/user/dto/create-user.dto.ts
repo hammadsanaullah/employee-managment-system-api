@@ -19,7 +19,7 @@ export class CreateUserDto {
   @IsString()
   @Length(2, 32)
   name: string;
-  
+
   @ApiProperty()
   @IsOptional()
   @IsString()

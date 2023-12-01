@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+} from 'typeorm';
 import { EntityBase } from '../../../shared/common/base.entity';
 import { Site } from '../../site/entities/site.entity';
 
@@ -6,17 +12,17 @@ import { Site } from '../../site/entities/site.entity';
 export class Rate extends EntityBase {
   @PrimaryGeneratedColumn()
   id: number;
-  
+
   @Column()
   role: string;
 
-  @Column({ type: "float" })
+  @Column({ type: 'float' })
   rate: number;
 
   @Column()
   siteId: number;
 
   @OneToOne(() => Site, (site) => site.rate)
-  @JoinColumn({ name: "siteId" })
+  @JoinColumn({ name: 'siteId' })
   site: Site;
 }

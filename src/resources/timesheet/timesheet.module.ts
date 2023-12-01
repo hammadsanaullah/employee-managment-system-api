@@ -16,6 +16,6 @@ import { SharedModule } from '../../shared/shared.module';
     SharedModule,
   ],
   controllers: [TimesheetController],
-  providers: [TimesheetService]
+  providers: [TimesheetService],
 })
 export class TimesheetModule {}

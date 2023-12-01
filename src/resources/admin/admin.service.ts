@@ -130,7 +130,7 @@ export class AdminService {
         {
           id: admin.id,
           email: admin.email,
-          roles: "ADMIN",
+          roles: 'ADMIN',
           tokenType: JWT_TOKEN_TYPE.LOGIN,
         },
         {
@@ -154,7 +154,9 @@ export class AdminService {
     }
   }
 
-  async createEmployee(createEmployeeDto: CreateEmployeeDto): Promise<ResponseDto> {
+  async createEmployee(
+    createEmployeeDto: CreateEmployeeDto,
+  ): Promise<ResponseDto> {
     const queryRunner = this.queryRunner.createQueryRunner();
     await queryRunner.connect();
     try {
@@ -162,26 +164,28 @@ export class AdminService {
       const { company, companyTitle, ...rest } = createEmployeeDto;
       const userRepo = queryRunner.manager.getRepository(User);
 
-      if(company === Company.INTERNAL && companyTitle) {
-        throw new BadRequestException("Can't provide companyTitle if employee is INTERNAL")
+      if (company === Company.INTERNAL && companyTitle) {
+        throw new BadRequestException(
+          "Can't provide companyTitle if employee is INTERNAL",
+        );
       }
       const user = await userRepo.save({
         company,
         companyTitle,
-        ...rest
-      })
+        ...rest,
+      });
 
-      const returnUser =  await userRepo
-      .createQueryBuilder('user')
-      .where('user.id = :id', { id: user.id })
-      .getOne();
+      const returnUser = await userRepo
+        .createQueryBuilder('user')
+        .where('user.id = :id', { id: user.id })
+        .getOne();
 
       await queryRunner.commitTransaction();
 
       return {
         message: COMMON_MESSAGE.SUCCESSFULLY_CREATED(User.name),
         data: {
-          returnUser
+          returnUser,
         },
       };
     } catch (error) {

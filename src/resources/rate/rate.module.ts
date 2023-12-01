@@ -16,6 +16,6 @@ import { SharedModule } from '../../shared/shared.module';
     SharedModule,
   ],
   controllers: [RateController],
-  providers: [RateService]
+  providers: [RateService],
 })
 export class RateModule {}

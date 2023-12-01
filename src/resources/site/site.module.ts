@@ -16,6 +16,6 @@ import { SharedModule } from '../../shared/shared.module';
     SharedModule,
   ],
   controllers: [SiteController],
-  providers: [SiteService]
+  providers: [SiteService],
 })
 export class SiteModule {}

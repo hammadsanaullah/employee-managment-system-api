@@ -48,7 +48,6 @@ export class AttendanceService {
 
       await queryRunner.commitTransaction();
 
-
       return {
         message: COMMON_MESSAGE.SUCCESSFULLY_CREATED(Attendance.name),
         data: attendance,
@@ -62,8 +61,11 @@ export class AttendanceService {
     }
   }
 
-  async checkOut(barCode: string, checkoutDto: CheckoutDto): Promise<ResponseDto> {
-    const { hours } = checkoutDto
+  async checkOut(
+    barCode: string,
+    checkoutDto: CheckoutDto,
+  ): Promise<ResponseDto> {
+    const { hours } = checkoutDto;
     const queryRunner = this.queryRunner.createQueryRunner();
     await queryRunner.connect();
     try {
@@ -79,7 +81,10 @@ export class AttendanceService {
         where: { shiftEnd: false, userId: user.id, deletedAt: null },
       });
       if (exists) {
-        await attendanceRepo.update({ id: exists.id }, { shiftEnd: true, totalHours: hours });
+        await attendanceRepo.update(
+          { id: exists.id },
+          { shiftEnd: true, totalHours: hours },
+        );
         await userRepo.update({ id: user.id }, { checkedIn: false });
       } else {
         throw new ConflictException('EMPLOYEE ALREADY CHECKEDOUT');

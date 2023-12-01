@@ -10,6 +10,14 @@ import { AttendanceModule } from './attendance/attendance.module';
 import { TimesheetModule } from './timesheet/timesheet.module';
 
 @Module({
-  imports: [UserModule, SharedModule, AdminModule, SiteModule, RateModule, AttendanceModule, TimesheetModule],
+  imports: [
+    UserModule,
+    SharedModule,
+    AdminModule,
+    SiteModule,
+    RateModule,
+    AttendanceModule,
+    TimesheetModule,
+  ],
 })
 export class ResourcesModule {}

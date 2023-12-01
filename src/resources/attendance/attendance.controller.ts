@@ -1,4 +1,13 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Patch,
+  Param,
+  Delete,
+  UseGuards,
+} from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
@@ -18,10 +27,13 @@ export class AttendanceController {
     return this.attendanceService.create(createAttendanceDto);
   }
 
-  @Post('/checkout/:barCode')
+  @Patch('/checkout/:barCode')
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  markAttendance(@Param("barCode") barCode: string, @Body() checkoutDto: CheckoutDto) {
+  markAttendance(
+    @Param('barCode') barCode: string,
+    @Body() checkoutDto: CheckoutDto,
+  ) {
     return this.attendanceService.checkOut(barCode, checkoutDto);
   }
 

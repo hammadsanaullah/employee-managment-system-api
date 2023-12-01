@@ -13,15 +13,15 @@
 //   import { Media } from '../../media/entities/media.entity';
 // import { User } from './user.entity';
 // // import { Attendance } from './attendance.entity';
-  
+
 //   @Entity()
 //   export class UserLocation extends EntityBase {
 //     @PrimaryGeneratedColumn()
 //     id: number;
-  
+
 //     @Column()
 //     userId: number;
-  
+
 //     @ManyToOne(() => User)
 //     @JoinColumn({ name: "userId" })
 //     user: User;
@@ -31,7 +31,7 @@
 
 //     @Column({ type: "float" })
 //     hourlyRate: number;
-  
+
 //     @ManyToOne(() => Location)
 //     @JoinColumn({ name: "locationId" })
 //     location: Location;
@@ -39,4 +39,3 @@
 //     // @OneToMany(() => Attendance, (attendance) => attendance.userLocation)
 //     // attendance: Attendance[];
 //   }
-  

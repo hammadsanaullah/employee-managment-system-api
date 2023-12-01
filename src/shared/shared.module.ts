@@ -12,6 +12,12 @@ import { PasswordHelperService } from './services/password-helper/password-helpe
     PassportModule.register({ defaultStrategy: 'jwt' }),
   ],
   providers: [JwtAuthGuard, JwtStrategy, SessionService, PasswordHelperService],
-  exports: [ServicesModule, JwtAuthGuard, JwtStrategy, SessionService, PasswordHelperService],
+  exports: [
+    ServicesModule,
+    JwtAuthGuard,
+    JwtStrategy,
+    SessionService,
+    PasswordHelperService,
+  ],
 })
 export class SharedModule {}

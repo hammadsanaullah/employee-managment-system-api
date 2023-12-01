@@ -84,7 +84,7 @@ export enum CATEGORY {
 
 export const EMAIL: string = process.env.EMAIL;
 
-export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY
+export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
 export const dbConfig: DataSourceOptions = {
   type: 'postgres',
@@ -138,14 +138,7 @@ export const METADATA_CONSTRUCTOR = (
   };
 };
 
-export const TypeORMEntities = [
-  User,
-  Admin,
-  Timesheet,
-  Rate,
-  Site,
-  Attendance
-];
+export const TypeORMEntities = [User, Admin, Timesheet, Rate, Site, Attendance];
 
 export const CRYPTER_SECRET = process.env.CRYPTER_SECRET;
 

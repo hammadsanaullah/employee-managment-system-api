@@ -5,7 +5,7 @@ import { EntityBase } from '../../../shared/common/base.entity';
 export class Admin extends EntityBase {
   @PrimaryGeneratedColumn()
   id: number;
-  
+
   @Column({ unique: true })
   username: string;
 

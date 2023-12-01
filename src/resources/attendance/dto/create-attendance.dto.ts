@@ -11,7 +11,7 @@ export class CreateAttendanceDto {
 
   @ApiProperty({
     required: true,
-    example: '13:30'
+    example: '13:30',
   })
   @IsNumber()
   @IsNotEmpty()

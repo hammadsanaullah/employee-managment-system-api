@@ -57,8 +57,10 @@ export class UserService {
   async findOne(barCode: string): Promise<ResponseDto> {
     try {
       const userRepo = this.queryRunner.manager.getRepository(User);
-      const user = await userRepo.findOne({where: {barCode, deletedAt: null}})
-      
+      const user = await userRepo.findOne({
+        where: { barCode, deletedAt: null },
+      });
+
       return {
         message: COMMON_MESSAGE.SUCCESSFULLY_GET(User.name),
         data: user,

@@ -54,7 +54,6 @@ export class TimesheetService {
         );
         days = 7;
       } else if (month && day) {
-
         startDate = new Date(year, month - 1, day);
 
         endDate = new Date(startDate);
@@ -64,7 +63,9 @@ export class TimesheetService {
 
         days = 1;
       } else {
-        throw new BadRequestException('Please provide month, and optionally, either week or day parameter.')
+        throw new BadRequestException(
+          'Please provide month, and optionally, either week or day parameter.',
+        );
       }
 
       const user = await userRepo.findOne({ where: { id: userId } });
@@ -77,8 +78,13 @@ export class TimesheetService {
       //   .getMany();
 
       let timesheet: any[] = [];
-      if(!siteIds) {
-        siteIds = (await siteRepo.find({ where: { deletedAt: null }, select: { id: true } })).map(site => site.id);
+      if (!siteIds) {
+        siteIds = (
+          await siteRepo.find({
+            where: { deletedAt: null },
+            select: { id: true },
+          })
+        ).map((site) => site.id);
       }
 
       for (const currentSiteId of siteIds) {
@@ -94,19 +100,19 @@ export class TimesheetService {
           .andWhere('rate.role = :role', { role: user.role })
           .leftJoinAndSelect('attendance.user', 'user')
           .getMany();
-      
+
         let hourlyRate: number;
         let totalHours: number = 0;
         let hoursCompleted: number = 0;
         let totalAmount: number;
         let currentSiteTimesheet: any;
-      
+
         for (const attendance of timesheetData) {
           hourlyRate = attendance.site.rate.rate;
           hoursCompleted += attendance.totalHours;
           totalHours = attendance.site.shiftHours * days;
         }
-      
+
         totalAmount = hourlyRate * hoursCompleted;
         currentSiteTimesheet = {
           siteId: currentSiteId,
@@ -115,7 +121,7 @@ export class TimesheetService {
           totalHours,
           totalAmount,
         };
-      
+
         // Add the current site's timesheet to the overall timesheet array
         timesheet.push(currentSiteTimesheet);
       }
@@ -163,7 +169,6 @@ export class TimesheetService {
         );
         days = 7;
       } else if (month && day) {
-        
         startDate = new Date(year, month - 1, day);
 
         endDate = new Date(startDate);
@@ -172,7 +177,9 @@ export class TimesheetService {
 
         days = 1;
       } else {
-        throw new BadRequestException('Please provide month, and optionally, either week or day parameter.')
+        throw new BadRequestException(
+          'Please provide month, and optionally, either week or day parameter.',
+        );
       }
 
       // const user = await userRepo.findOne({ where: { id: userId } });
@@ -186,12 +193,16 @@ export class TimesheetService {
 
       let timesheet: any[] = [];
 
-      if(type == TypeOptions.EMPLOYEE) {
-        
-        if(!userIds) {
-          userIds = (await userRepo.find({ where: { deletedAt: null }, select: { id: true } })).map(site => site.id);
+      if (type == TypeOptions.EMPLOYEE) {
+        if (!userIds) {
+          userIds = (
+            await userRepo.find({
+              where: { deletedAt: null },
+              select: { id: true },
+            })
+          ).map((site) => site.id);
         }
-  
+
         for (const currentUserId of userIds) {
           const user = await userRepo.findOne({ where: { id: currentUserId } });
           const timesheetData = await attendanceRepo
@@ -206,19 +217,19 @@ export class TimesheetService {
             .andWhere('rate.role = :role', { role: user?.role })
             .leftJoinAndSelect('attendance.user', 'user')
             .getMany();
-        
+
           let hourlyRate: number = 0;
           let totalHours: number = 0;
           let hoursCompleted: number = 0;
           let totalAmount: number = 0;
           let currentSiteTimesheet: any;
-        
+
           for (const attendance of timesheetData) {
             hourlyRate = attendance.site.rate.rate;
             hoursCompleted += attendance.totalHours;
             totalHours = attendance.site.shiftHours * days;
           }
-        
+
           totalAmount = hourlyRate * hoursCompleted;
           currentSiteTimesheet = {
             userId: currentUserId,
@@ -227,10 +238,9 @@ export class TimesheetService {
             totalHours,
             totalAmount,
           };
-        
+
           timesheet.push(currentSiteTimesheet);
         }
-  
       } else if (type == TypeOptions.POSITION) {
         if (roles && !Array.isArray(roles)) {
           roles = [roles];
@@ -238,7 +248,7 @@ export class TimesheetService {
         // if(!roles) {
         //   roles = (await userRepo.find({ where: { deletedAt: null }, select: { role: true } })).map(user => user.id);
         // }
-  
+
         for (const role of roles) {
           const timesheetData = await attendanceRepo
             .createQueryBuilder('attendance')
@@ -251,19 +261,19 @@ export class TimesheetService {
             .andWhere('LOWER(rate.role) = LOWER(:role)', { role })
             .leftJoinAndSelect('attendance.user', 'user')
             .getMany();
-        
+
           let hourlyRate: number = 0;
           let totalHours: number = 0;
           let hoursCompleted: number = 0;
           let totalAmount: number = 0;
           let currentSiteTimesheet: any;
-        
+
           for (const attendance of timesheetData) {
             hourlyRate = attendance.site.rate.rate;
             hoursCompleted += attendance.totalHours;
             totalHours = attendance.site.shiftHours * days; //the totalHours will result less in case of role because site has limited shit hours and roles accumlative hours will exceed them because of number of employees
           }
-        
+
           totalAmount = hourlyRate * hoursCompleted;
           currentSiteTimesheet = {
             role,
@@ -272,12 +282,11 @@ export class TimesheetService {
             totalHours,
             totalAmount,
           };
-        
+
           timesheet.push(currentSiteTimesheet);
         }
-  
       }
-      
+
       return {
         message: COMMON_MESSAGE.SUCCESSFULLY_GET(Timesheet.name),
         data: timesheet,

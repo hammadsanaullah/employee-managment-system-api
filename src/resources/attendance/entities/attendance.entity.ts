@@ -1,4 +1,11 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, JoinColumn, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  JoinColumn,
+  ManyToOne,
+} from 'typeorm';
 import { EntityBase } from '../../../shared/common/base.entity';
 import { Site } from '../../site/entities/site.entity';
 import { User } from '../../user/entities/user.entity';
@@ -8,26 +15,26 @@ export class Attendance extends EntityBase {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   shiftTime: string;
 
   @Column()
   siteId: number;
 
   @ManyToOne(() => Site, (site) => site.attendance)
-  @JoinColumn({ name: "siteId" })
+  @JoinColumn({ name: 'siteId' })
   site: Site;
 
   @Column()
   userId: number;
 
   @ManyToOne(() => User, (user) => user.attendance)
-  @JoinColumn({ name: "userId" })
+  @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column({default: 0})
+  @Column({ default: 0 })
   totalHours: number;
 
-  @Column({default: false})
+  @Column({ default: false })
   shiftEnd: boolean;
 }

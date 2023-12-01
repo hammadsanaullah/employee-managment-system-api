@@ -1,17 +1,25 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNumber, IsOptional, IsPositive, IsInt, IsNotEmpty, IsArray, IsString } from 'class-validator';
+import {
+  IsNumber,
+  IsOptional,
+  IsPositive,
+  IsInt,
+  IsNotEmpty,
+  IsArray,
+  IsString,
+} from 'class-validator';
 import { TypeOptions } from '../../../utils/constants';
 
 export class TimesheetSiteDto {
   @ApiProperty({
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   siteId: number;
 
   @ApiProperty({
     required: false,
-    type: [Number]
+    type: [Number],
   })
   // @IsArray()
   @IsOptional()
@@ -20,7 +28,7 @@ export class TimesheetSiteDto {
 
   @ApiProperty({
     required: false,
-    type: [String]
+    type: [String],
   })
   // @IsArray()
   @IsOptional()
@@ -29,32 +37,32 @@ export class TimesheetSiteDto {
 
   @ApiProperty({
     required: true,
-    enum: TypeOptions
+    enum: TypeOptions,
   })
   @IsNotEmpty()
   @IsString()
   type: TypeOptions;
 
   @ApiProperty({
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   year: number;
 
   @ApiProperty({
-    required: false
+    required: false,
   })
   @IsOptional()
   month?: number;
 
   @ApiProperty({
-    required: false
+    required: false,
   })
   @IsOptional()
   week?: number;
 
   @ApiProperty({
-    required: false
+    required: false,
   })
   @IsOptional()
   day?: number;

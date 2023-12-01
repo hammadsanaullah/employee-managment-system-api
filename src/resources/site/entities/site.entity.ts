@@ -1,4 +1,10 @@
-import { Entity, Column, PrimaryGeneratedColumn, OneToOne, OneToMany } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  OneToOne,
+  OneToMany,
+} from 'typeorm';
 import { EntityBase } from '../../../shared/common/base.entity';
 import { Rate } from '../../rate/entities/rate.entity';
 import { Attendance } from '../../attendance/entities/attendance.entity';
@@ -7,7 +13,7 @@ import { Attendance } from '../../attendance/entities/attendance.entity';
 export class Site extends EntityBase {
   @PrimaryGeneratedColumn()
   id: number;
-  
+
   @Column({ unique: true })
   companyName: string;
 

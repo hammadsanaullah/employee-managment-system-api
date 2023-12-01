@@ -29,28 +29,28 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }
 
       let user: Admin | User;
-      if(payload.roles === 'ADMIN') {
+      if (payload.roles === 'ADMIN') {
         const adminRepo = this.queryRunner.getRepository(Admin);
         user = await adminRepo
-         .createQueryBuilder('admin')
-         .where('admin.id = :id', { id: payload.id })
-         .andWhere('admin.deletedAt IS NULL')
-         .getOne();
-       return {
-         ...user,
-         tokenType: payload.tokenType,
-       };
+          .createQueryBuilder('admin')
+          .where('admin.id = :id', { id: payload.id })
+          .andWhere('admin.deletedAt IS NULL')
+          .getOne();
+        return {
+          ...user,
+          tokenType: payload.tokenType,
+        };
       } else {
         const userRepo = this.queryRunner.getRepository(User);
         user = await userRepo
-         .createQueryBuilder('user')
-         .where('user.id = :id', { id: payload.id })
-         .andWhere('user.deletedAt IS NULL')
-         .getOne();
-       return {
-         ...user,
-         tokenType: payload.tokenType,
-       };
+          .createQueryBuilder('user')
+          .where('user.id = :id', { id: payload.id })
+          .andWhere('user.deletedAt IS NULL')
+          .getOne();
+        return {
+          ...user,
+          tokenType: payload.tokenType,
+        };
       }
     } catch (error) {
       throw new InternalServerErrorException(error);

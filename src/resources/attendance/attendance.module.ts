@@ -16,6 +16,6 @@ import { SharedModule } from '../../shared/shared.module';
     SharedModule,
   ],
   controllers: [AttendanceController],
-  providers: [AttendanceService]
+  providers: [AttendanceService],
 })
 export class AttendanceModule {}

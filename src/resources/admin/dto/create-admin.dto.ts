@@ -9,7 +9,7 @@ import {
 
 export class CreateAdminDto {
   @ApiProperty({
-    required: true
+    required: true,
   })
   @IsString()
   @IsNotEmpty()
@@ -17,7 +17,7 @@ export class CreateAdminDto {
   name: string;
 
   @ApiProperty({
-    required: true
+    required: true,
   })
   @IsString()
   @IsNotEmpty()
@@ -25,7 +25,7 @@ export class CreateAdminDto {
   username: string;
 
   @ApiProperty({
-    required: true
+    required: true,
   })
   @IsNotEmpty()
   @IsString()
@@ -33,14 +33,14 @@ export class CreateAdminDto {
   email: string;
 
   @ApiProperty({
-    required: false
+    required: false,
   })
   @IsString()
   @IsOptional()
   phoneNumber: string;
 
   @ApiProperty({
-    required: true
+    required: true,
   })
   @IsString()
   @IsNotEmpty()
