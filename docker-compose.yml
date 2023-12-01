@@ -8,3 +8,4 @@ services:
       - 6000:5432
     environment:
       POSTGRES_PASSWORD: password123
+      TZ: "Asia/Karachi"

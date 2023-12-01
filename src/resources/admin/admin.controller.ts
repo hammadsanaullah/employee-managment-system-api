@@ -29,10 +29,10 @@ export class AdminController {
     return this.adminService.createEmployee(createEmployeeDto);
   }
 
-  @Post('update-employee')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  updateEmployee(@Body() updateEmployeeDto: UpdateEmployeeDto) {
-    return this.adminService.updateEmployee(updateEmployeeDto);
-  }
+  // @Post('update-employee')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // updateEmployee(@Body() updateEmployeeDto: UpdateEmployeeDto) {
+  //   return this.adminService.updateEmployee(updateEmployeeDto);
+  // }
 }

@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
-    IsArray,
+  IsArray,
   IsEmail,
   IsIn,
   IsNotEmpty,
@@ -10,116 +10,70 @@ import {
   IsString,
   Length,
 } from 'class-validator';
-import { Role } from '../../../utils/constants';
+import { Company } from '../../../utils/constants';
 
 export class CreateEmployeeDto {
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  @IsString()
+  employeeCode: string;
 
-    @ApiProperty()
-    @IsString()
-    @IsNotEmpty()
-    username: string;
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
+  @IsString()
+  barCode: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
   firstName: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsString()
   @IsNotEmpty()
   lastName: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsString()
   @IsPhoneNumber()
   @IsNotEmpty()
   phoneNumber: string;
 
-  @ApiProperty()
-  @IsString()
+  //   @ApiProperty()
+  //   @IsNumber()
+  //   @IsNotEmpty()
+  //   hourlyRate: number;
+
+  //   @ApiProperty()
+  //   @IsNotEmpty()
+  //   @IsNumber()
+  //   locationId: number;
+
+  @ApiProperty({ required: true })
+  @IsNumber()
   @IsNotEmpty()
-  workAddress: string;
+  noOfLeaves: number;
 
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  workLocation: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  department: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsString()
-  @IsEmail()
-  officialEmail: string;
-
-//   @ApiProperty()
-//   @IsNumber()
-//   @IsNotEmpty()
-//   hourlyRate: number;
-
-//   @ApiProperty()
-//   @IsNotEmpty()
-//   @IsNumber()
-//   locationId: number;
-
-  @ApiProperty()
-  @IsString()
-  @IsNotEmpty()
-  employeeType: string;
-
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsString()
-  pinCode: string;
+  role: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
-  @IsString()
-  barCode: string;
-
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsIn([Role.SUPERVISOR, Role.EMPLOYEE], {
-    message: 'Role must be either "USER", "BUSINESS"',
+  @IsIn([Company.INTERNAL, Company.EXTERNAL], {
+    message: 'Company must be either "INTERNAL", "EXTERNAL"',
   })
-  role: Role;
+  company: Company;
 
-  @ApiProperty({
-    required: true,
-    example: [
-      {
-        hourlyRate: 1,
-        locationId: 1,
-      },
-    ],
-  })
-  @IsArray()
-  @IsNotEmpty()
-  payload: HourlyRateLocation[];
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  companyTitle: string;
 }
-
-export class HourlyRateLocation {
-    @ApiProperty({
-      example: 1,
-    })
-    @IsNotEmpty()
-    @IsNumber()
-    hourlyRate: number;
-  
-    @ApiProperty({
-      example: 1,
-    })
-    @IsNotEmpty()
-    @IsNumber()
-    locationId: number;
-  }

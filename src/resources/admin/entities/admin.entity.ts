@@ -1,6 +1,4 @@
 import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-import { AbstractEntity } from '../../../shared/entities/abstract.entity';
-import { Role } from '../../../utils/constants';
 import { EntityBase } from '../../../shared/common/base.entity';
 
 @Entity()
@@ -23,6 +21,6 @@ export class Admin extends EntityBase {
   @Column()
   password: string;
 
-  @Column({ enum: Role, default: 'ADMIN' })
-  role: Role;
+  @Column({ default: 'ADMIN' })
+  role: string;
 }

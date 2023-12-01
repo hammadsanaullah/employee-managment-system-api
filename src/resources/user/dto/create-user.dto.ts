@@ -9,7 +9,7 @@ import {
   Length,
   Min,
 } from 'class-validator';
-import { Role } from '../../../utils/constants';
+// import { Role } from '../../../utils/constants';
 
 export class CreateUserDto {
   //name, address, province, phoneNumber, email, comment(for business only)
@@ -66,10 +66,10 @@ export class CreateUserDto {
   @IsString()
   password: string;
 
-  @ApiProperty()
-  @IsNotEmpty()
-  @IsIn([Role.SUPERVISOR, Role.EMPLOYEE], {
-    message: 'Role must be either "USER", "BUSINESS"',
-  })
-  role: Role;
+  // @ApiProperty()
+  // @IsNotEmpty()
+  // @IsIn([Role.SUPERVISOR, Role.EMPLOYEE], {
+  //   message: 'Role must be either "USER", "BUSINESS"',
+  // })
+  // role: Role;
 }

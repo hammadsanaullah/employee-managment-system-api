@@ -1,11 +1,11 @@
 import { config } from 'dotenv';
 import { DataSourceOptions, SelectQueryBuilder } from 'typeorm';
 import { User } from '../resources/user/entities/user.entity';
-import { Location } from '../resources/location/entities/location.entity';
 import { Admin } from '../resources/admin/entities/admin.entity';
-import { Media } from '../resources/media/entities/media.entity';
-import { UserLocation } from '../resources/user/entities/user-location.entity';
-import { Attendance } from '../resources/user/entities/attendance.entity';
+import { Timesheet } from '../resources/timesheet/entities/timesheet.entity';
+import { Rate } from '../resources/rate/entities/rate.entity';
+import { Attendance } from '../resources/attendance/entities/attendance.entity';
+import { Site } from '../resources/site/entities/site.entity';
 config();
 
 export const COMMON_MESSAGE = {
@@ -140,19 +140,29 @@ export const METADATA_CONSTRUCTOR = (
 
 export const TypeORMEntities = [
   User,
-  Location,
   Admin,
-  Media,
-  UserLocation,
+  Timesheet,
+  Rate,
+  Site,
   Attendance
 ];
 
 export const CRYPTER_SECRET = process.env.CRYPTER_SECRET;
 
-export enum Role {
+// export enum Role {
+//   EMPLOYEE = 'EMPLOYEE',
+//   SUPERVISOR = 'SUPERVISOR',
+//   ADMIN = 'ADMIN',
+// }
+
+export enum Company {
+  INTERNAL = 'INTERNAL',
+  EXTERNAL = 'EXTERNAL',
+}
+
+export enum TypeOptions {
   EMPLOYEE = 'EMPLOYEE',
-  SUPERVISOR = 'SUPERVISOR',
-  ADMIN = 'ADMIN',
+  POSITION = 'POSITION',
 }
 
 export const CLOUD_NAME = process.env.CLOUD_NAME;

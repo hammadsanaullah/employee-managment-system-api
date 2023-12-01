@@ -20,14 +20,11 @@ import {
   GOOGLE_CLIENT_ID,
   GOOGLE_CLIENT_SECRET,
   JWT_TOKEN_TYPE,
-  Role,
 } from '../../utils/constants';
 import { jwtConfig } from '../../config/jwt.config';
 import { SignInDto } from './dto/sign-in.dto';
 import { ResponseDto } from '../../shared/common/response.dto';
 import { ToggleCheckInCheckOutDto } from './dto/toggle-checkin-checkout.dto';
-import { UserLocation } from './entities/user-location.entity';
-import { Attendance } from './entities/attendance.entity';
 
 @Injectable()
 export class UserService {
@@ -39,209 +36,241 @@ export class UserService {
 
   logger = new Logger(UserService.name);
 
-  private getMonthString(monthIndex: number): string {
-    // Convert month index to month string (e.g., 0 -> 'January', 1 -> 'February', etc.)
-    const months = [
-      'January',
-      'February',
-      'March',
-      'April',
-      'May',
-      'June',
-      'July',
-      'August',
-      'September',
-      'October',
-      'November',
-      'December',
-    ];
-    if (monthIndex < 0 || monthIndex >= months.length) {
-      throw new Error('Invalid month index');
+  async find(role: string): Promise<ResponseDto> {
+    try {
+      const userRepo = this.queryRunner.manager.getRepository(User);
+      const users = await userRepo
+        .createQueryBuilder('user')
+        .where('user.deletedAt IS NULL')
+        .andWhere('LOWER(user.role) = LOWER(:role)', { role })
+        .getMany();
+      return {
+        message: COMMON_MESSAGE.SUCCESSFULLY_GET(User.name),
+        data: users,
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(error);
     }
-    return months[monthIndex];
   }
 
-  // use this to get number of weeks relative to year
-  // private getWeekNumber(date: Date): number {
-  //   // Logic to calculate the ISO week number based on the date
-  //   // Adjust as needed for your specific requirements
-  //   const january4 = new Date(date.getFullYear(), 0, 4);
-  //   const daysDiff =
-  //     (date.getTime() - january4.getTime()) / (24 * 60 * 60 * 1000);
-  //   const weekNumber = Math.ceil((daysDiff + january4.getDay() + 1) / 7);
-  //   return weekNumber === 0
-  //     ? this.getWeekNumber(new Date(date.getFullYear() - 1, 11, 31))
-  //     : weekNumber;
+  async findOne(barCode: string): Promise<ResponseDto> {
+    try {
+      const userRepo = this.queryRunner.manager.getRepository(User);
+      const user = await userRepo.findOne({where: {barCode, deletedAt: null}})
+      
+      return {
+        message: COMMON_MESSAGE.SUCCESSFULLY_GET(User.name),
+        data: user,
+      };
+    } catch (error) {
+      this.logger.error(error);
+      throw new InternalServerErrorException(error);
+    }
+  }
+
+  // private getMonthString(monthIndex: number): string {
+  //   // Convert month index to month string (e.g., 0 -> 'January', 1 -> 'February', etc.)
+  //   const months = [
+  //     'January',
+  //     'February',
+  //     'March',
+  //     'April',
+  //     'May',
+  //     'June',
+  //     'July',
+  //     'August',
+  //     'September',
+  //     'October',
+  //     'November',
+  //     'December',
+  //   ];
+  //   if (monthIndex < 0 || monthIndex >= months.length) {
+  //     throw new Error('Invalid month index');
+  //   }
+  //   return months[monthIndex];
   // }
 
-  private getWeekNumber(date: Date): number {
-    // Clone the date to avoid modifying the original date
-    const clonedDate = new Date(date.getTime());
-  
-    // Set the date to the first day of the month
-    clonedDate.setDate(1);
-  
-    // Calculate the difference in full weeks
-    const weeksDiff = Math.floor((date.getDate() - clonedDate.getDate() + clonedDate.getDay()) / 7);
-  
-    return weeksDiff + 1; // Adding 1 to start the count from 1
-  }
-  
+  // // use this to get number of weeks relative to year
+  // // private getWeekNumber(date: Date): number {
+  // //   // Logic to calculate the ISO week number based on the date
+  // //   // Adjust as needed for your specific requirements
+  // //   const january4 = new Date(date.getFullYear(), 0, 4);
+  // //   const daysDiff =
+  // //     (date.getTime() - january4.getTime()) / (24 * 60 * 60 * 1000);
+  // //   const weekNumber = Math.ceil((daysDiff + january4.getDay() + 1) / 7);
+  // //   return weekNumber === 0
+  // //     ? this.getWeekNumber(new Date(date.getFullYear() - 1, 11, 31))
+  // //     : weekNumber;
+  // // }
 
-  private getDayOfWeekString(dayIndex: number): string {
-    // Convert day index to day string (e.g., 0 -> 'Sunday', 1 -> 'Monday', etc.)
-    const daysOfWeek = [
-      'Sunday',
-      'Monday',
-      'Tuesday',
-      'Wednesday',
-      'Thursday',
-      'Friday',
-      'Saturday',
-    ];
-    if (dayIndex < 0 || dayIndex >= daysOfWeek.length) {
-      throw new Error('Invalid day index');
-    }
-    return daysOfWeek[dayIndex];
-  }
+  // private getWeekNumber(date: Date): number {
+  //   // Clone the date to avoid modifying the original date
+  //   const clonedDate = new Date(date.getTime());
 
-  async signIn(signInDto: SignInDto): Promise<ResponseDto> {
-    const queryRunner = this.queryRunner.createQueryRunner();
-    try {
-      const { email, pinCode } = signInDto;
-      const userRepo = queryRunner.manager.getRepository(User);
+  //   // Set the date to the first day of the month
+  //   clonedDate.setDate(1);
 
-      const user = await userRepo
-        .createQueryBuilder('user')
-        .where('user.email = :email', { email })
-        .getOne();
+  //   // Calculate the difference in full weeks
+  //   const weeksDiff = Math.floor((date.getDate() - clonedDate.getDate() + clonedDate.getDay()) / 7);
 
-      if (!user) {
-        throw new NotFoundException(ERROR_MESSAGE.USER_NOT_FOUND);
-      }
+  //   return weeksDiff + 1; // Adding 1 to start the count from 1
+  // }
 
-      if (pinCode !== user.pinCode) {
-        throw new UnauthorizedException(ERROR_MESSAGE.INVALID_CREDENTIALS);
-      }
-      if (user.role !== Role.SUPERVISOR) {
-        throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_SUPERVISOR);
-      }
+  // private getDayOfWeekString(dayIndex: number): string {
+  //   // Convert day index to day string (e.g., 0 -> 'Sunday', 1 -> 'Monday', etc.)
+  //   const daysOfWeek = [
+  //     'Sunday',
+  //     'Monday',
+  //     'Tuesday',
+  //     'Wednesday',
+  //     'Thursday',
+  //     'Friday',
+  //     'Saturday',
+  //   ];
+  //   if (dayIndex < 0 || dayIndex >= daysOfWeek.length) {
+  //     throw new Error('Invalid day index');
+  //   }
+  //   return daysOfWeek[dayIndex];
+  // }
 
-      const accessToken = this.jwt.sign(
-        {
-          id: user.id,
-          phoneNumber: user.phoneNumber,
-          email: user.email,
-          roles: user.role,
-          tokenType: JWT_TOKEN_TYPE.LOGIN,
-        },
-        {
-          secret: jwtConfig.secret,
-          expiresIn: jwtConfig.signOptions.expiresIn,
-        },
-      );
+  // async signIn(signInDto: SignInDto): Promise<ResponseDto> {
+  //   const queryRunner = this.queryRunner.createQueryRunner();
+  //   try {
+  //     const { email, pinCode } = signInDto;
+  //     const userRepo = queryRunner.manager.getRepository(User);
 
-      return {
-        message: COMMON_MESSAGE.SIGNIN_SUCCESSFULLY,
-        data: {
-          user,
-          accessToken,
-        },
-      };
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException(error);
-    }
-  }
+  //     const user = await userRepo
+  //       .createQueryBuilder('user')
+  //       .where('user.email = :email', { email })
+  //       .getOne();
 
-  async toggleCheckInOrCheckOut(
-    toggleDto: ToggleCheckInCheckOutDto,
-  ): Promise<ResponseDto> {
-    const queryRunner = this.queryRunner.createQueryRunner();
-    try {
-      const { userId, locationId } = toggleDto;
-      const userRepo = queryRunner.manager.getRepository(User);
-      const userLocationRepo = queryRunner.manager.getRepository(UserLocation);
-      const attendanceRepo = queryRunner.manager.getRepository(Attendance);
+  //     if (!user) {
+  //       throw new NotFoundException(ERROR_MESSAGE.USER_NOT_FOUND);
+  //     }
 
-      const currentDate = new Date();
-      const year = currentDate.getFullYear();
-      const month = this.getMonthString(currentDate.getMonth());
-      const week = this.getWeekNumber(currentDate);
-      const weekDay = this.getDayOfWeekString(currentDate.getDay());
+  //     if (pinCode !== user.pinCode) {
+  //       throw new UnauthorizedException(ERROR_MESSAGE.INVALID_CREDENTIALS);
+  //     }
+  //     if (user.role !== Role.SUPERVISOR) {
+  //       throw new UnauthorizedException(ERROR_MESSAGE.USER_NOT_SUPERVISOR);
+  //     }
 
-      let user = await userRepo
-      .createQueryBuilder('user')
-      .where('user.id = :id', { id: userId })
-      .getOne();
+  //     const accessToken = this.jwt.sign(
+  //       {
+  //         id: user.id,
+  //         phoneNumber: user.phoneNumber,
+  //         email: user.email,
+  //         roles: user.role,
+  //         tokenType: JWT_TOKEN_TYPE.LOGIN,
+  //       },
+  //       {
+  //         secret: jwtConfig.secret,
+  //         expiresIn: jwtConfig.signOptions.expiresIn,
+  //       },
+  //     );
 
-      if (!user) {
-        throw new NotFoundException(ERROR_MESSAGE.USER_NOT_FOUND);
-      }
+  //     return {
+  //       message: COMMON_MESSAGE.SIGNIN_SUCCESSFULLY,
+  //       data: {
+  //         user,
+  //         accessToken,
+  //       },
+  //     };
+  //   } catch (error) {
+  //     this.logger.error(error);
+  //     throw new InternalServerErrorException(error);
+  //   }
+  // }
 
-      if (user.checkedIn) {
-        user = await userRepo
-        .createQueryBuilder('user')
-        .where('user.id = :id', { id: userId })
-        .leftJoinAndSelect('user.userLocations', 'userLocations')
-        .leftJoinAndSelect('userLocations.attendance', 'attendance')
-        .andWhere('userLocations.locationId = :locationId', { locationId })
-        .andWhere('attendance.year = :year', { year })
-        .andWhere('attendance.month = :month', { month })
-        .andWhere('attendance.week = :week', { week })
-        .andWhere('attendance.weekDay = :weekDay', { weekDay })
-        .getOne();
-        const elements  = user.userLocations[0].attendance.length;
-        //check last element of attendance array and update it to checkout
-        await attendanceRepo.update(
-          { id: user.userLocations[0].attendance[elements - 1].id },
-          { checkOut: new Date() },
-        );
+  // async toggleCheckInOrCheckOut(
+  //   toggleDto: ToggleCheckInCheckOutDto,
+  // ): Promise<ResponseDto> {
+  //   const queryRunner = this.queryRunner.createQueryRunner();
+  //   try {
+  //     const { userId, locationId } = toggleDto;
+  //     const userRepo = queryRunner.manager.getRepository(User);
+  //     const userLocationRepo = queryRunner.manager.getRepository(UserLocation);
+  //     const attendanceRepo = queryRunner.manager.getRepository(Attendance);
 
-        await userRepo.update({ id: userId }, { checkedIn: false });
-      } else {
-        user = await userRepo
-        .createQueryBuilder('user')
-        .where('user.id = :id', { id: userId })
-        .leftJoinAndSelect('user.userLocations', 'userLocations')
-        .leftJoinAndSelect('userLocations.attendance', 'attendance')
-        .andWhere('userLocations.locationId = :locationId', { locationId })
-        .getOne();
-        //simply checkin
-        await attendanceRepo.save({
-          year,
-          month,
-          week,
-          weekDay,
-          checkIn: new Date(),
-          userLocationId: user.userLocations[0].id,
-        });
-        await userRepo.update({ id: userId }, { checkedIn: true });
-      }
+  //     const currentDate = new Date();
+  //     const year = currentDate.getFullYear();
+  //     const month = this.getMonthString(currentDate.getMonth());
+  //     const week = this.getWeekNumber(currentDate);
+  //     const weekDay = this.getDayOfWeekString(currentDate.getDay());
 
-      user = await userRepo
-        .createQueryBuilder('user')
-        .where('user.id = :id', { id: userId })
-        .leftJoinAndSelect('user.userLocations', 'userLocations')
-        .leftJoinAndSelect('userLocations.attendance', 'attendance')
-        .andWhere('userLocations.locationId = :locationId', { locationId })
-        .andWhere('attendance.year = :year', { year })
-        .andWhere('attendance.month = :month', { month })
-        .andWhere('attendance.week = :week', { week })
-        .andWhere('attendance.weekDay = :weekDay', { weekDay })
-        .getOne();
+  //     let user = await userRepo
+  //     .createQueryBuilder('user')
+  //     .where('user.id = :id', { id: userId })
+  //     .getOne();
 
-      return {
-        message: COMMON_MESSAGE.SUCCESSFULLY_UPDATED('Check Status of User'),
-        data: {
-          user,
-        },
-      };
-    } catch (error) {
-      this.logger.error(error);
-      throw new InternalServerErrorException(error);
-    }
-  }
+  //     if (!user) {
+  //       throw new NotFoundException(ERROR_MESSAGE.USER_NOT_FOUND);
+  //     }
+
+  //     if (user.checkedIn) {
+  //       user = await userRepo
+  //       .createQueryBuilder('user')
+  //       .where('user.id = :id', { id: userId })
+  //       .leftJoinAndSelect('user.userLocations', 'userLocations')
+  //       .leftJoinAndSelect('userLocations.attendance', 'attendance')
+  //       .andWhere('userLocations.locationId = :locationId', { locationId })
+  //       .andWhere('attendance.year = :year', { year })
+  //       .andWhere('attendance.month = :month', { month })
+  //       .andWhere('attendance.week = :week', { week })
+  //       .andWhere('attendance.weekDay = :weekDay', { weekDay })
+  //       .getOne();
+  //       const elements  = user.userLocations[0].attendance.length;
+  //       //check last element of attendance array and update it to checkout
+  //       await attendanceRepo.update(
+  //         { id: user.userLocations[0].attendance[elements - 1].id },
+  //         { checkOut: new Date() },
+  //       );
+
+  //       await userRepo.update({ id: userId }, { checkedIn: false });
+  //     } else {
+  //       user = await userRepo
+  //       .createQueryBuilder('user')
+  //       .where('user.id = :id', { id: userId })
+  //       .leftJoinAndSelect('user.userLocations', 'userLocations')
+  //       .leftJoinAndSelect('userLocations.attendance', 'attendance')
+  //       .andWhere('userLocations.locationId = :locationId', { locationId })
+  //       .getOne();
+  //       //simply checkin
+  //       await attendanceRepo.save({
+  //         year,
+  //         month,
+  //         week,
+  //         weekDay,
+  //         checkIn: new Date(),
+  //         userLocationId: user.userLocations[0].id,
+  //       });
+  //       await userRepo.update({ id: userId }, { checkedIn: true });
+  //     }
+
+  //     user = await userRepo
+  //       .createQueryBuilder('user')
+  //       .where('user.id = :id', { id: userId })
+  //       .leftJoinAndSelect('user.userLocations', 'userLocations')
+  //       .leftJoinAndSelect('userLocations.attendance', 'attendance')
+  //       .andWhere('userLocations.locationId = :locationId', { locationId })
+  //       .andWhere('attendance.year = :year', { year })
+  //       .andWhere('attendance.month = :month', { month })
+  //       .andWhere('attendance.week = :week', { week })
+  //       .andWhere('attendance.weekDay = :weekDay', { weekDay })
+  //       .getOne();
+
+  //     return {
+  //       message: COMMON_MESSAGE.SUCCESSFULLY_UPDATED('Check Status of User'),
+  //       data: {
+  //         user,
+  //       },
+  //     };
+  //   } catch (error) {
+  //     this.logger.error(error);
+  //     throw new InternalServerErrorException(error);
+  //   }
+  // }
 
   // async findOne(): Promise<ResponseDto> {
   //   const queryRunner = this.queryRunner.createQueryRunner();
@@ -313,7 +342,7 @@ export class UserService {
   //   }
   // }
 
-  remove(id: number) {
-    return `This action removes a #${id} user`;
-  }
+  // remove(id: number) {
+  //   return `This action removes a #${id} user`;
+  // }
 }

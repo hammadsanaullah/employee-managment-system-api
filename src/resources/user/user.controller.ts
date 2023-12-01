@@ -25,32 +25,39 @@ import { ToggleCheckInCheckOutDto } from './dto/toggle-checkin-checkout.dto';
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post('/sign-in')
-  signIn(@Body() signInDto: SignInDto) {
-    return this.userService.signIn(signInDto);
-  }
+  // @Post('/sign-in')
+  // signIn(@Body() signInDto: SignInDto) {
+  //   return this.userService.signIn(signInDto);
+  // }
 
-  @Patch('/toggle-checkin-or-checkout')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
-  toggleCheckInOrCheckOut(@Body() toggleDto: ToggleCheckInCheckOutDto) {
-    return this.userService.toggleCheckInOrCheckOut(toggleDto);
-  }
-
-  // @Get()
+  // @Patch('/toggle-checkin-or-checkout')
   // @UseGuards(JwtAuthGuard)
   // @ApiBearerAuth()
-  // findOne() {
-  //   return this.userService.findOne();
+  // toggleCheckInOrCheckOut(@Body() toggleDto: ToggleCheckInCheckOutDto) {
+  //   return this.userService.toggleCheckInOrCheckOut(toggleDto);
   // }
+
+  @Get('/by-role/:role')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  find(@Param('role') role: string) {
+    return this.userService.find(role);
+  }
+
+  @Get('/:barCode')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  findOne(@Param('barCode') barCode: string) {
+    return this.userService.findOne(barCode);
+  }
 
   // @Patch('update-profile')
   // update(@Body() updateUserDto: UpdateUserDto) {
   //   return this.userService.update(updateUserDto);
   // }
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
+  // @Delete(':id')
+  // remove(@Param('id') id: string) {
+  //   return this.userService.remove(+id);
+  // }
 }

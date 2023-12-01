@@ -8,26 +8,41 @@ import {
 } from 'class-validator';
 
 export class CreateAdminDto {
-  @ApiProperty()
+  @ApiProperty({
+    required: true
+  })
   @IsString()
   @IsNotEmpty()
   @Length(2, 32)
   name: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: true
+  })
   @IsString()
   @IsNotEmpty()
   @Length(2, 32)
   username: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: true
+  })
   @IsNotEmpty()
   @IsString()
   @IsEmail()
   email: string;
 
-  @ApiProperty()
+  @ApiProperty({
+    required: false
+  })
   @IsString()
   @IsOptional()
   phoneNumber: string;
+
+  @ApiProperty({
+    required: true
+  })
+  @IsString()
+  @IsNotEmpty()
+  password: string;
 }

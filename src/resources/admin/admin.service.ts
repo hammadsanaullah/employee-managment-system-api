@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   ConflictException,
   Injectable,
   InternalServerErrorException,
@@ -14,17 +15,15 @@ import { Crypt } from '../../shared/services/crypter/crypt';
 import { Admin } from './entities/admin.entity';
 import {
   COMMON_MESSAGE,
+  Company,
   ERROR_MESSAGE,
   JWT_TOKEN_TYPE,
-  Role,
 } from '../../utils/constants';
 import { jwtConfig } from '../../config/jwt.config';
 import { PasswordHelperService } from '../../shared/services/password-helper/password-helper.service';
 import { SignInAdminDto } from './dto/sign-in-admin.dto';
 import { CreateEmployeeDto } from './dto/create-new-employee';
 import { User } from '../user/entities/user.entity';
-import { Location } from '../location/entities/location.entity';
-import { UserLocation } from '../user/entities/user-location.entity';
 import { UpdateEmployeeDto } from './dto/update-employee';
 
 @Injectable()
@@ -38,13 +37,13 @@ export class AdminService {
   logger = new Logger(AdminService.name);
 
   async create(createAdminDto: CreateAdminDto): Promise<ResponseDto> {
-    const { email, username } = createAdminDto;
+    const { email, username, password } = createAdminDto;
 
     const queryRunner = this.queryRunner.createQueryRunner();
+    await queryRunner.connect();
     try {
-      const password = await this.passwordHelper.generatePassword();
+      // const password = await this.passwordHelper.generatePassword();
 
-      await queryRunner.connect();
       await queryRunner.startTransaction();
       const adminRepo = queryRunner.manager.getRepository(Admin);
 
@@ -57,7 +56,7 @@ export class AdminService {
         .getOne();
 
       if (adminExist) {
-        throw new UnprocessableEntityException('Admin Already Exist!');
+        throw new ConflictException('Admin Already Exist!');
       }
 
       const admin = await adminRepo.save({
@@ -131,7 +130,7 @@ export class AdminService {
         {
           id: admin.id,
           email: admin.email,
-          roles: Role.ADMIN,
+          roles: "ADMIN",
           tokenType: JWT_TOKEN_TYPE.LOGIN,
         },
         {
@@ -157,31 +156,24 @@ export class AdminService {
 
   async createEmployee(createEmployeeDto: CreateEmployeeDto): Promise<ResponseDto> {
     const queryRunner = this.queryRunner.createQueryRunner();
+    await queryRunner.connect();
     try {
-      await queryRunner.connect();
       await queryRunner.startTransaction();
-      const { payload, ...rest } = createEmployeeDto;
+      const { company, companyTitle, ...rest } = createEmployeeDto;
       const userRepo = queryRunner.manager.getRepository(User);
-      const userLocationRepo = queryRunner.manager.getRepository(UserLocation);
 
-      const locationRepo = queryRunner.manager.getRepository(Location);
-
+      if(company === Company.INTERNAL && companyTitle) {
+        throw new BadRequestException("Can't provide companyTitle if employee is INTERNAL")
+      }
       const user = await userRepo.save({
+        company,
+        companyTitle,
         ...rest
       })
-
-      for(const singleLocation of payload) {
-        await userLocationRepo.save({
-          userId: user.id,
-          locationId: singleLocation.locationId,
-          hourlyRate: singleLocation.hourlyRate,
-        })
-      }
 
       const returnUser =  await userRepo
       .createQueryBuilder('user')
       .where('user.id = :id', { id: user.id })
-      .leftJoinAndSelect('user.userLocations', 'userLocations')
       .getOne();
 
       await queryRunner.commitTransaction();
@@ -195,15 +187,6 @@ export class AdminService {
     } catch (error) {
       this.logger.error(error);
       await queryRunner.rollbackTransaction();
-      if (
-        error?.code == '23505' &&
-        error?.detail ===
-          `Key (officialEmail)=(${createEmployeeDto.officialEmail}) already exists.`
-      ) {
-        throw new ConflictException(
-          ERROR_MESSAGE.ALREADY_EXIST(createEmployeeDto.officialEmail),
-        );
-      }
       if (
         error?.code == '23505' &&
         error?.detail ===
@@ -228,68 +211,68 @@ export class AdminService {
     }
   }
 
-  async updateEmployee(updateEmployeeDto: UpdateEmployeeDto): Promise<ResponseDto> {
-    const queryRunner = this.queryRunner.createQueryRunner();
-    try {
-      await queryRunner.connect();
-      await queryRunner.startTransaction();
-      const { userId, ...rest } = updateEmployeeDto;
-      const userRepo = queryRunner.manager.getRepository(User);
-      const userLocationRepo = queryRunner.manager.getRepository(UserLocation);
+  // async updateEmployee(updateEmployeeDto: UpdateEmployeeDto): Promise<ResponseDto> {
+  //   const queryRunner = this.queryRunner.createQueryRunner();
+  //   try {
+  //     await queryRunner.connect();
+  //     await queryRunner.startTransaction();
+  //     const { userId, ...rest } = updateEmployeeDto;
+  //     const userRepo = queryRunner.manager.getRepository(User);
+  //     const userLocationRepo = queryRunner.manager.getRepository(UserLocation);
 
-      const locationRepo = queryRunner.manager.getRepository(Location);
+  //     const locationRepo = queryRunner.manager.getRepository(Location);
 
-      await userRepo.update({ id: userId },{
-        ...rest
-      })
+  //     await userRepo.update({ id: userId },{
+  //       ...rest
+  //     })
 
-      const returnUser =  await userRepo
-      .createQueryBuilder('user')
-      .where('user.id = :id', { id: userId })
-      .leftJoinAndSelect('user.userLocations', 'userLocations')
-      .getOne();
+  //     const returnUser =  await userRepo
+  //     .createQueryBuilder('user')
+  //     .where('user.id = :id', { id: userId })
+  //     .leftJoinAndSelect('user.userLocations', 'userLocations')
+  //     .getOne();
 
-      await queryRunner.commitTransaction();
+  //     await queryRunner.commitTransaction();
 
-      return {
-        message: COMMON_MESSAGE.SUCCESSFULLY_UPDATED(User.name),
-        data: {
-          returnUser
-        },
-      };
-    } catch (error) {
-      this.logger.error(error);
-      await queryRunner.rollbackTransaction();
-      if (
-        error?.code == '23505' &&
-        error?.detail ===
-          `Key (officialEmail)=(${updateEmployeeDto.officialEmail}) already exists.`
-      ) {
-        throw new ConflictException(
-          ERROR_MESSAGE.ALREADY_EXIST(updateEmployeeDto.officialEmail),
-        );
-      }
-      if (
-        error?.code == '23505' &&
-        error?.detail ===
-          `Key (email)=(${updateEmployeeDto.email}) already exists.`
-      ) {
-        throw new ConflictException(
-          ERROR_MESSAGE.ALREADY_EXIST(updateEmployeeDto.email),
-        );
-      }
-      if (
-        error?.code == '23505' &&
-        error?.detail ===
-          `Key (phoneNumber)=(${updateEmployeeDto.phoneNumber}) already exists.`
-      ) {
-        throw new ConflictException(
-          ERROR_MESSAGE.ALREADY_EXIST(updateEmployeeDto.phoneNumber),
-        );
-      }
-      throw new InternalServerErrorException(error);
-    } finally {
-      queryRunner.release();
-    }
-  }
+  //     return {
+  //       message: COMMON_MESSAGE.SUCCESSFULLY_UPDATED(User.name),
+  //       data: {
+  //         returnUser
+  //       },
+  //     };
+  //   } catch (error) {
+  //     this.logger.error(error);
+  //     await queryRunner.rollbackTransaction();
+  //     if (
+  //       error?.code == '23505' &&
+  //       error?.detail ===
+  //         `Key (officialEmail)=(${updateEmployeeDto.officialEmail}) already exists.`
+  //     ) {
+  //       throw new ConflictException(
+  //         ERROR_MESSAGE.ALREADY_EXIST(updateEmployeeDto.officialEmail),
+  //       );
+  //     }
+  //     if (
+  //       error?.code == '23505' &&
+  //       error?.detail ===
+  //         `Key (email)=(${updateEmployeeDto.email}) already exists.`
+  //     ) {
+  //       throw new ConflictException(
+  //         ERROR_MESSAGE.ALREADY_EXIST(updateEmployeeDto.email),
+  //       );
+  //     }
+  //     if (
+  //       error?.code == '23505' &&
+  //       error?.detail ===
+  //         `Key (phoneNumber)=(${updateEmployeeDto.phoneNumber}) already exists.`
+  //     ) {
+  //       throw new ConflictException(
+  //         ERROR_MESSAGE.ALREADY_EXIST(updateEmployeeDto.phoneNumber),
+  //       );
+  //     }
+  //     throw new InternalServerErrorException(error);
+  //   } finally {
+  //     queryRunner.release();
+  //   }
+  // }
 }

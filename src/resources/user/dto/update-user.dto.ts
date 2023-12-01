@@ -7,7 +7,7 @@ import {
   IsPhoneNumber,
   IsString,
 } from 'class-validator';
-import { Role } from '../../../utils/constants';
+// import { Role } from '../../../utils/constants';
 
 export class UpdateUserDto {
   @ApiProperty()

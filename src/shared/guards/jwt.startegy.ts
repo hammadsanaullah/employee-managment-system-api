@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
 import { ExtractJwt, Strategy } from 'passport-jwt';
-import { ERROR_MESSAGE, Role } from '../../utils/constants';
+import { ERROR_MESSAGE } from '../../utils/constants';
 import { JwtPayload } from '../common/jwt.payload.dto';
 import { jwtConfig } from '../../config/jwt.config';
 import { QueryRunnerService } from '../services/query-runner/query-runner.service';
@@ -29,7 +29,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       }
 
       let user: Admin | User;
-      if(payload.roles === Role.ADMIN) {
+      if(payload.roles === 'ADMIN') {
         const adminRepo = this.queryRunner.getRepository(Admin);
         user = await adminRepo
          .createQueryBuilder('admin')

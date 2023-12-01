@@ -7,8 +7,7 @@ import {
   OneToMany,
 } from 'typeorm';
 import { EntityBase } from '../../../shared/common/base.entity';
-import { Media } from '../../media/entities/media.entity';
-import { UserLocation } from './user-location.entity';
+import { Attendance } from '../../attendance/entities/attendance.entity';
 
 @Entity()
 export class User extends EntityBase {
@@ -16,55 +15,46 @@ export class User extends EntityBase {
   id: number;
 
   @Column()
-  username: string;
-
-  @Column()
   firstName: string;
 
-  @Column({nullable: true})
+  @Column({ nullable: true })
   lastName: string;
 
   @Column({
-    unique: true
+    unique: true,
   })
   phoneNumber: string;
 
   @Column({ unique: true, nullable: true })
   email: string;
 
-  @Column({ unique: true})
-  officialEmail: string;
-
-  @Column()
-  workAddress: string;
-
-  @Column()
-  workLocation: string;
-
-  @Column()
-  department: string;
-
-  @Column()
-  pinCode: string;
-
   @Column()
   barCode: string;
+
+  @Column()
+  employeeCode: string;
+
+  @Column()
+  noOfLeaves: number;
 
   @Column()
   role: string;
 
   @Column()
-  employeeType: string;
+  company: string;
 
-  @Column({default: false})
+  @Column({ nullable: true })
+  companyTitle: string;
+
+  @Column({ default: false, nullable: true })
   checkedIn: boolean;
 
   @VersionColumn()
   update: number;
 
-  @OneToMany(() => UserLocation, (userLocation) => userLocation.user)
-  userLocations: UserLocation[];
+  @OneToMany(() => Attendance, (attendance) => attendance.user)
+  attendance: Attendance[];
 
-  @OneToOne(() => Media, (media) => media.user)
-  media: Media;
+  // @OneToOne(() => Media, (media) => media.user)
+  // media: Media;
 }

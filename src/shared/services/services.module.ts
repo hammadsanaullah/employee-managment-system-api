@@ -6,6 +6,7 @@ import { PasswordHelperService } from './password-helper/password-helper.service
 // import { StorageClientService } from './storage-client/storage-client.service';
 // import { HelpersService } from './helpers/helpers.service';
 import { HttpModule } from '@nestjs/axios';
+import { ScheduledJobsService } from './scheduled-jobs/scheduled-jobs.service';
 @Module({
   imports: [HttpModule],
   providers: [
@@ -13,6 +14,7 @@ import { HttpModule } from '@nestjs/axios';
     // CrypterService,
     // OtpService,
     PasswordHelperService,
+    ScheduledJobsService,
     // StorageClientService,
     // HelpersService
   ],

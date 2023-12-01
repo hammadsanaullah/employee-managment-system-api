@@ -1,6 +1,8 @@
 import { ApiProperty } from '@nestjs/swagger';
 import {
+  IsArray,
   IsEmail,
+  IsIn,
   IsNotEmpty,
   IsNumber,
   IsOptional,
@@ -8,79 +10,70 @@ import {
   IsString,
   Length,
 } from 'class-validator';
+import { Company } from '../../../utils/constants';
 
 export class UpdateEmployeeDto {
-
-    @ApiProperty()
-    @IsNumber()
-    @IsNotEmpty()
-    userId: number;
-
-    @ApiProperty()
-    @IsString()
-    @IsOptional()
-    username: string;
-
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ required: false })
   @IsOptional()
+  @IsString()
+  employeeCode: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  barCode: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsNotEmpty()
   firstName: string;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ required: false })
   @IsOptional()
+  @IsNotEmpty()
   lastName: string;
 
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   @IsEmail()
   email: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsPhoneNumber()
+  @ApiProperty({ required: false })
   @IsOptional()
+  @IsPhoneNumber()
+  @IsNotEmpty()
   phoneNumber: string;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  workAddress: string;
+  //   @ApiProperty()
+  //   @IsNumber()
+  //   @IsNotEmpty()
+  //   hourlyRate: number;
 
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  workLocation: string;
+  //   @ApiProperty()
+  //   @IsNotEmpty()
+  //   @IsNumber()
+  //   locationId: number;
 
-  @ApiProperty()
-  @IsString()
+  @ApiProperty({ required: false })
   @IsOptional()
-  department: string;
+  @IsNotEmpty()
+  noOfLeaves: number;
 
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  @IsEmail()
-  officialEmail: string;
-
-  @ApiProperty()
-  @IsString()
-  @IsOptional()
-  employeeType: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  pinCode: string;
-
-  @ApiProperty()
-  @IsOptional()
-  @IsString()
-  barCode: string;
-
-  @ApiProperty()
+  @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
   role: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsIn([Company.INTERNAL, Company.EXTERNAL], {
+    message: 'Company must be either "INTERNAL", "EXTERNAL"',
+  })
+  company: Company;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  companyTitle: string;
 }
