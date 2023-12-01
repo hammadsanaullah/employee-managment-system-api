@@ -34,37 +34,83 @@ export class Seed implements Seeder {
           ...adminTemplate,
         } as DeepPartial<Admin>);
       }
-      const userTemplate = {
-        firstName: 'john',
-        lastName: 'wick',
-        phoneNumber: '+923212345677',
-        email: 'user@user.com',
-        role: 'Welder',
-        barCode: 'barCode',
-        employeeCode: 'employeeCode',
-        noOfLeaves: 10,
-        company: 'INTERNAL',
-      };
-      const users = await userRepo.find();
-      if (users.length === 0) {
-        await userRepo.save({ ...userTemplate });
-      }
-      const siteTemplate = {
-        companyName: 'Apple',
-        site: 'California Site',
-        emirates: 'Downtown',
-        shiftHours: 8,
-      };
-      const sites = await siteRepo.find();
-      let site: Site;
-      if (sites.length === 0) {
-        site = await siteRepo.save({ ...siteTemplate });
-        const rateTemplate = {
-          siteId: site.id,
+
+      const uniqueUserAttributes = [
+        {
+          firstName: 'john',
+          lastName: 'wick',
+          phoneNumber: '+923212345677',
+          email: 'user1@user.com',
           role: 'Welder',
-          rate: 10,
-        };
-        await rateRepo.save({ ...rateTemplate });
+          barCode: 'barCode1',
+          employeeCode: 'employeeCode1',
+          noOfLeaves: 10,
+          company: 'INTERNAL',
+        },
+        {
+          firstName: 'jane',
+          lastName: 'doe',
+          phoneNumber: '+923212345678',
+          email: 'user2@user.com',
+          role: 'Builder',
+          barCode: 'barCode2',
+          employeeCode: 'employeeCode2',
+          noOfLeaves: 10,
+          company: 'INTERNAL',
+        },
+        {
+          firstName: 'alice',
+          lastName: 'smith',
+          phoneNumber: '+923212345679',
+          email: 'user3@user.com',
+          role: 'Fabricator',
+          barCode: 'barCode3',
+          employeeCode: 'employeeCode3',
+          noOfLeaves: 10,
+          company: 'INTERNAL',
+        },
+      ];
+
+      const uniqueSiteAttributes = [
+        {
+          companyName: 'Apple',
+          site: 'California Site',
+          emirates: 'Downtown',
+          shiftHours: 8,
+        },
+        {
+          companyName: 'Google',
+          site: 'Mountain View Site',
+          emirates: 'Silicon Valley',
+          shiftHours: 7,
+        },
+        {
+          companyName: 'Microsoft',
+          site: 'Redmond Site',
+          emirates: 'Washington',
+          shiftHours: 6,
+        },
+      ];
+
+      const uniqueRateAttributes = [
+        { role: 'Welder', rate: 10 },
+        { role: 'Builder', rate: 20 },
+        { role: 'Fabricator', rate: 30 },
+      ];
+
+      for (let i = 0; i < 3; i++) {
+        const user = await userRepo.save({
+          ...uniqueUserAttributes[i],
+        });
+
+        const site = await siteRepo.save({
+          ...uniqueSiteAttributes[i],
+        });
+
+        await rateRepo.save({
+          ...uniqueRateAttributes[i],
+          siteId: site.id,
+        });
       }
     } catch (error) {
       this.logger.error(error);
