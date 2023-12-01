@@ -43,30 +43,29 @@ export class Seed implements Seeder {
         barCode: 'barCode',
         employeeCode: 'employeeCode',
         noOfLeaves: 10,
-        company: 'INTERNAL'
+        company: 'INTERNAL',
       };
       const users = await userRepo.find();
-      if(users.length === 0) {
-        await userRepo.save({...userTemplate})
+      if (users.length === 0) {
+        await userRepo.save({ ...userTemplate });
       }
       const siteTemplate = {
         companyName: 'Apple',
         site: 'California Site',
         emirates: 'Downtown',
         shiftHours: 8,
-      }
+      };
       const sites = await siteRepo.find();
       let site: Site;
-      if(sites.length === 0) {
-        site = await siteRepo.save({...siteTemplate})
+      if (sites.length === 0) {
+        site = await siteRepo.save({ ...siteTemplate });
         const rateTemplate = {
           siteId: site.id,
           role: 'Welder',
           rate: 10,
-        }
-        await rateRepo.save({...rateTemplate})
+        };
+        await rateRepo.save({ ...rateTemplate });
       }
-
     } catch (error) {
       this.logger.error(error);
     }
