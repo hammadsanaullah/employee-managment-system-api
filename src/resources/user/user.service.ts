@@ -7,8 +7,6 @@ import {
   NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { JwtService } from '@nestjs/jwt';
 import { QueryRunnerService } from '../../shared/services/query-runner/query-runner.service';
 import { SessionService } from '../../shared/services/session/session.service';

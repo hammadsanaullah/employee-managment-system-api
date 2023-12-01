@@ -11,7 +11,6 @@ import {
   Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { UpdateUserDto } from './dto/update-user.dto';
 import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/sign-in.dto';
 import { TransformInterceptor } from '../../shared/common/transform.interceptor';
