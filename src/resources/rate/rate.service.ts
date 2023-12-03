@@ -68,7 +68,12 @@ export class RateService {
   async findOne(id: number): Promise<ResponseDto> {
     try {
       const rateRepo = this.queryRunner.manager.getRepository(Rate);
-      const rate = await rateRepo.findOne({ where: { id, deletedAt: null } });
+      const rate = await rateRepo
+        .createQueryBuilder('rate')
+        .where('rate.deletedAt IS NULL AND rate.id = :id', { id })
+        .leftJoinAndSelect('rate.site', 'site')
+        .getOne();
+      // const rate = await rateRepo.findOne({ where: { id, deletedAt: null } });
       if (!rate) {
         throw new NotFoundException(ERROR_MESSAGE.NOT_FOUND(Rate.name));
       }
