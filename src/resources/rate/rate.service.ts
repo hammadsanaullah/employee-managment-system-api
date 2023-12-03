@@ -49,7 +49,12 @@ export class RateService {
   async findAll(): Promise<ResponseDto> {
     try {
       const rateRepo = this.queryRunner.manager.getRepository(Rate);
-      const rates = await rateRepo.find({ where: { deletedAt: null } });
+      const rates = await rateRepo
+        .createQueryBuilder('rate')
+        .where('rate.deletedAt IS NULL')
+        .leftJoinAndSelect('rate.site', 'site')
+        .getMany();
+      // const rates = await rateRepo.find({ where: { deletedAt: null } });
       return {
         message: COMMON_MESSAGE.SUCCESSFULLY_GET(Rate.name),
         data: rates,
