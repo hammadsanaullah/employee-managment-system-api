@@ -24,9 +24,13 @@ export class RateService {
       await queryRunner.startTransaction();
       const rateRepo = queryRunner.manager.getRepository(Rate);
       const exists = await rateRepo.findOne({
-        where: { siteId: createRateDto.siteId, deletedAt: null },
+        where: {
+          siteId: createRateDto.siteId,
+          role: createRateDto.role,
+          deletedAt: null,
+        },
       });
-      if (exists && exists.role === createRateDto.role) {
+      if (exists) {
         throw new ConflictException(ERROR_MESSAGE.ALREADY_EXIST(Rate.name));
       }
       const rate = await rateRepo.save({ ...createRateDto });

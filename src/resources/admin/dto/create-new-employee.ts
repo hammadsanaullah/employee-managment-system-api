@@ -44,7 +44,7 @@ export class CreateEmployeeDto {
 
   @ApiProperty({ required: true })
   @IsString()
-  @IsPhoneNumber()
+  // @IsPhoneNumber()
   @IsNotEmpty()
   phoneNumber: string;
 

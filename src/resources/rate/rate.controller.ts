@@ -20,8 +20,8 @@ export class RateController {
   constructor(private readonly rateService: RateService) {}
 
   @Post()
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
   create(@Body() createRateDto: CreateRateDto) {
     return this.rateService.create(createRateDto);
   }

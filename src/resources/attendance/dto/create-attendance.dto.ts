@@ -13,7 +13,7 @@ export class CreateAttendanceDto {
     required: true,
     example: '13:30',
   })
-  @IsNumber()
+  // @IsNumber()
   @IsNotEmpty()
   shiftTime: string;
 

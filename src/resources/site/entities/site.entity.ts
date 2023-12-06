@@ -4,6 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { EntityBase } from '../../../shared/common/base.entity';
 import { Rate } from '../../rate/entities/rate.entity';
@@ -26,7 +27,7 @@ export class Site extends EntityBase {
   @Column()
   shiftHours: number;
 
-  @OneToOne(() => Rate, (rate) => rate.site)
+  @ManyToOne(() => Rate, (rate) => rate.site)
   rate: Rate;
 
   @OneToMany(() => Attendance, (attendance) => attendance.site)
