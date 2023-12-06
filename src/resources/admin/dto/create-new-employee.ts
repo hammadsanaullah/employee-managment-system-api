@@ -67,6 +67,11 @@ export class CreateEmployeeDto {
   @IsString()
   role: string;
 
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  password: string;
+
   @ApiProperty({ required: true })
   @IsNotEmpty()
   @IsIn([Company.INTERNAL, Company.EXTERNAL], {

@@ -166,6 +166,7 @@ export class AdminService {
       await queryRunner.startTransaction();
       const { picture, company, companyTitle, ...rest } = createEmployeeDto;
       const userRepo = queryRunner.manager.getRepository(User);
+      const adminRepo = queryRunner.manager.getRepository(Admin);
 
       if (company === Company.INTERNAL && companyTitle) {
         throw new BadRequestException(
@@ -182,6 +183,17 @@ export class AdminService {
         imageUrl: result.secure_url,
         ...rest,
       });
+
+      if (rest.role === 'SUPERVISOR' && rest.password) {
+        const hashedPassword = await Crypt.hashString(rest.password);
+        await adminRepo.save({
+          username: user.email,
+          password: hashedPassword,
+          email: rest.email,
+          phoneNumber: rest.phoneNumber,
+          role: 'SUPERVISOR',
+        });
+      }
 
       const returnUser = await userRepo
         .createQueryBuilder('user')

@@ -38,11 +38,19 @@ export class AttendanceService {
           'Shift is already in progress, end first one then start second',
         );
       }
-      const attendance = await attendanceRepo.save({
+      const savedAttendance = await attendanceRepo.save({
         userId: user.id,
         siteId,
         shiftTime,
       });
+
+      const attendance = await attendanceRepo
+        .createQueryBuilder('attendance')
+        .where('attendance.deletedAt IS NULL AND attendance.id = :id', {
+          id: savedAttendance.id,
+        })
+        .leftJoinAndSelect('attendance.user', 'user')
+        .getOne();
 
       await userRepo.update({ id: user.id }, { checkedIn: true });
 

@@ -91,6 +91,7 @@ export class UserService {
       const userRepo = this.queryRunner.manager.getRepository(User);
       const users = await userRepo.find({
         where: { deletedAt: null },
+        order: { id: 'DESC' },
       });
 
       return {
