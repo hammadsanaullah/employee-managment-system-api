@@ -187,6 +187,7 @@ export class AdminService {
       if (rest.role === 'SUPERVISOR' && rest.password) {
         const hashedPassword = await Crypt.hashString(rest.password);
         await adminRepo.save({
+          name: rest.firstName + ' ' + rest.lastName,
           username: user.email,
           password: hashedPassword,
           email: rest.email,

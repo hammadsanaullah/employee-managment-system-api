@@ -4,7 +4,7 @@ import {
   PrimaryGeneratedColumn,
   OneToOne,
   JoinColumn,
-  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { EntityBase } from '../../../shared/common/base.entity';
 import { Site } from '../../site/entities/site.entity';
@@ -23,7 +23,7 @@ export class Rate extends EntityBase {
   @Column()
   siteId: number;
 
-  @OneToMany(() => Site, (site) => site.rate)
+  @ManyToOne(() => Site, (site) => site.rate)
   @JoinColumn({ name: 'siteId' })
   site: Site;
 }

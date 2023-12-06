@@ -5,6 +5,7 @@ import {
   UseGuards,
   UseInterceptors,
   UploadedFile,
+  Patch,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
@@ -42,6 +43,19 @@ export class AdminController {
     createEmployeeDto.picture = picture;
     return this.adminService.createEmployee(createEmployeeDto);
   }
+
+  // @Patch('update-employee/:employeeId')
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
+  // @UseInterceptors(FileInterceptor('picture'))
+  // @ApiConsumes('multipart/form-data')
+  // createNewEmployee(
+  //   @UploadedFile() picture: Express.Multer.File,
+  //   @Body() createEmployeeDto: CreateEmployeeDto,
+  // ) {
+  //   createEmployeeDto.picture = picture;
+  //   return this.adminService.createEmployee(createEmployeeDto);
+  // }
 
   // @Post('update-employee')
   // @UseGuards(JwtAuthGuard)

@@ -108,7 +108,7 @@ export class TimesheetService {
         let currentSiteTimesheet: any;
 
         for (const attendance of timesheetData) {
-          hourlyRate = attendance.site.rate.rate;
+          hourlyRate = attendance.site.rate[0].rate;
           hoursCompleted += attendance.totalHours;
           totalHours = attendance.site.shiftHours * days;
         }
@@ -225,7 +225,7 @@ export class TimesheetService {
           let currentSiteTimesheet: any;
 
           for (const attendance of timesheetData) {
-            hourlyRate = attendance.site.rate.rate;
+            hourlyRate = attendance.site.rate[0].rate;
             hoursCompleted += attendance.totalHours;
             totalHours = attendance.site.shiftHours * days;
           }
@@ -274,9 +274,9 @@ export class TimesheetService {
           const totalUniqueUsers = uniqueUserIds.size;
 
           for (const attendance of timesheetData) {
-            hourlyRate = attendance.site.rate.rate;
+            hourlyRate = attendance.site.rate[0].rate;
             hoursCompleted += attendance.totalHours;
-            totalHours = attendance.site.rate.rate * days * totalUniqueUsers; //the totalHours will result less in case of role because site has limited shit hours and roles accumlative hours will exceed them because of number of employees
+            totalHours = attendance.site.rate[0].rate * days * totalUniqueUsers; //the totalHours will result less in case of role because site has limited shit hours and roles accumlative hours will exceed them because of number of employees
           }
 
           totalAmount = hourlyRate * hoursCompleted;
