@@ -6,6 +6,8 @@ import {
   UseInterceptors,
   UploadedFile,
   Patch,
+  Param,
+  Delete,
 } from '@nestjs/common';
 import { AdminService } from './admin.service';
 import { CreateAdminDto } from './dto/create-admin.dto';
@@ -44,18 +46,26 @@ export class AdminController {
     return this.adminService.createEmployee(createEmployeeDto);
   }
 
-  // @Patch('update-employee/:employeeId')
-  // @UseGuards(JwtAuthGuard)
-  // @ApiBearerAuth()
-  // @UseInterceptors(FileInterceptor('picture'))
-  // @ApiConsumes('multipart/form-data')
-  // createNewEmployee(
-  //   @UploadedFile() picture: Express.Multer.File,
-  //   @Body() createEmployeeDto: CreateEmployeeDto,
-  // ) {
-  //   createEmployeeDto.picture = picture;
-  //   return this.adminService.createEmployee(createEmployeeDto);
-  // }
+  @Patch('update-employee/:employeeId')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  @UseInterceptors(FileInterceptor('picture'))
+  @ApiConsumes('multipart/form-data')
+  updateEmployee(
+    @Param('employeeId') employeeId: number,
+    @UploadedFile() picture: Express.Multer.File,
+    @Body() createEmployeeDto: CreateEmployeeDto,
+  ) {
+    createEmployeeDto.picture = picture;
+    return this.adminService.updateEmployee(employeeId, createEmployeeDto);
+  }
+
+  @Delete('employee/:id')
+  @UseGuards(JwtAuthGuard)
+  @ApiBearerAuth()
+  remove(@Param('id') id: string) {
+    return this.adminService.remove(+id);
+  }
 
   // @Post('update-employee')
   // @UseGuards(JwtAuthGuard)

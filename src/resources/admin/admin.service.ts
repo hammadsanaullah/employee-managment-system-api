@@ -4,6 +4,7 @@ import {
   Injectable,
   InternalServerErrorException,
   Logger,
+  NotFoundException,
   UnauthorizedException,
   UnprocessableEntityException,
 } from '@nestjs/common';
@@ -236,6 +237,92 @@ export class AdminService {
     }
   }
 
+  async updateEmployee(
+    employeeId: number,
+    updateEmployeeDto: UpdateEmployeeDto,
+  ): Promise<ResponseDto> {
+    const queryRunner = this.queryRunner.createQueryRunner();
+    await queryRunner.connect();
+    try {
+      await queryRunner.startTransaction();
+      const { picture, company, companyTitle, ...rest } = updateEmployeeDto;
+      const userRepo = queryRunner.manager.getRepository(User);
+      const adminRepo = queryRunner.manager.getRepository(Admin);
+
+      if (company === Company.INTERNAL && companyTitle) {
+        throw new BadRequestException(
+          "Can't provide companyTitle if employee is INTERNAL",
+        );
+      }
+
+      const exist = await userRepo.findOne({
+        where: { id: employeeId, deletedAt: null },
+      });
+      if (!exist) {
+        throw new NotFoundException(ERROR_MESSAGE.NOT_FOUND(User.name));
+      }
+
+      if (picture) {
+        const result = (await this.cloudinaryService.upload(
+          picture,
+        )) as UploadApiResponse;
+        const user = await userRepo.update(
+          { id: employeeId },
+          {
+            imageUrl: result.secure_url,
+          },
+        );
+      }
+
+      const user = await userRepo.update(
+        { id: employeeId },
+        {
+          company,
+          companyTitle,
+          ...rest,
+        },
+      );
+
+      const returnUser = await userRepo
+        .createQueryBuilder('user')
+        .where('user.id = :id', { id: employeeId })
+        .getOne();
+
+      await queryRunner.commitTransaction();
+
+      return {
+        message: COMMON_MESSAGE.SUCCESSFULLY_UPDATED(User.name),
+        data: {
+          returnUser,
+        },
+      };
+    } catch (error) {
+      this.logger.error(error);
+      await queryRunner.rollbackTransaction();
+      if (
+        error?.code == '23505' &&
+        error?.detail ===
+          `Key (email)=(${updateEmployeeDto.email}) already exists.`
+      ) {
+        throw new ConflictException(
+          ERROR_MESSAGE.ALREADY_EXIST(updateEmployeeDto.email),
+        );
+      }
+      if (
+        error?.code == '23505' &&
+        error?.detail ===
+          `Key (phoneNumber)=(${updateEmployeeDto.phoneNumber}) already exists.`
+      ) {
+        throw new ConflictException(
+          ERROR_MESSAGE.ALREADY_EXIST(updateEmployeeDto.phoneNumber),
+        );
+      }
+      throw new InternalServerErrorException(error);
+    } finally {
+      queryRunner.release();
+    }
+  }
+
   // async updateEmployee(updateEmployeeDto: UpdateEmployeeDto): Promise<ResponseDto> {
   //   const queryRunner = this.queryRunner.createQueryRunner();
   //   try {
@@ -300,4 +387,28 @@ export class AdminService {
   //     queryRunner.release();
   //   }
   // }
+
+  async remove(id: number) {
+    const queryRunner = this.queryRunner.createQueryRunner();
+    await queryRunner.connect();
+    try {
+      await queryRunner.startTransaction();
+      const userRepo = queryRunner.manager.getRepository(User);
+
+      await userRepo.softDelete(id);
+
+      await queryRunner.commitTransaction();
+
+      return {
+        message: COMMON_MESSAGE.SUCCESSFULLY_DELETED(User.name),
+        data: COMMON_MESSAGE.SUCCESSFULLY_DELETED(User.name),
+      };
+    } catch (error) {
+      this.logger.error(error);
+      await queryRunner.rollbackTransaction();
+      throw new InternalServerErrorException(error);
+    } finally {
+      await queryRunner.release();
+    }
+  }
 }

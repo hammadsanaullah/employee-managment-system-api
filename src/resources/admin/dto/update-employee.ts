@@ -13,23 +13,26 @@ import {
 import { Company } from '../../../utils/constants';
 
 export class UpdateEmployeeDto {
+  @ApiProperty({ type: 'string', format: 'binary', required: false })
+  picture: Express.Multer.File;
+
   @ApiProperty({ required: false })
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   employeeCode: string;
 
   @ApiProperty({ required: false })
-  @IsOptional()
+  @IsNotEmpty()
   @IsString()
   barCode: string;
 
   @ApiProperty({ required: false })
-  @IsOptional()
+  @IsString()
   @IsNotEmpty()
   firstName: string;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
+  @ApiProperty({ required: true })
+  @IsString()
   @IsNotEmpty()
   lastName: string;
 
@@ -39,9 +42,9 @@ export class UpdateEmployeeDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsPhoneNumber()
+  @ApiProperty({ required: true })
+  @IsString()
+  // @IsPhoneNumber()
   @IsNotEmpty()
   phoneNumber: string;
 
@@ -55,18 +58,22 @@ export class UpdateEmployeeDto {
   //   @IsNumber()
   //   locationId: number;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
+  @ApiProperty({ required: true })
   @IsNotEmpty()
   noOfLeaves: number;
 
-  @ApiProperty({ required: false })
-  @IsOptional()
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
   @IsString()
   role: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
+  @IsString()
+  password: string;
+
+  @ApiProperty({ required: true })
+  @IsNotEmpty()
   @IsIn([Company.INTERNAL, Company.EXTERNAL], {
     message: 'Company must be either "INTERNAL", "EXTERNAL"',
   })
