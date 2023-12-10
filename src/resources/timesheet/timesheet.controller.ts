@@ -27,8 +27,8 @@ export class TimesheetController {
   // }
 
   @Get('get-timesheet-by-employee')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
   timesheetByEmployee(@Query() timesheetDto: TimesheetDto) {
     return this.timesheetService.timesheetByEmployee(timesheetDto);
   }

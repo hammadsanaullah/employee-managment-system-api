@@ -101,21 +101,37 @@ export class TimesheetService {
           .leftJoinAndSelect('attendance.user', 'user')
           .getMany();
 
-        let hourlyRate: number;
+        const site = await siteRepo
+          .createQueryBuilder('site')
+          .where({
+            id: currentSiteId,
+          })
+          .leftJoinAndSelect('site.rate', 'rate')
+          .andWhere('rate.role = :role', { role: user.role })
+          .getOne();
+
+        let hourlyRate: number = 0;
         let totalHours: number = 0;
         let hoursCompleted: number = 0;
-        let totalAmount: number;
+        let totalAmount: number = 0;
         let currentSiteTimesheet: any;
+        // let site: any;
 
-        for (const attendance of timesheetData) {
-          hourlyRate = attendance.site.rate[0].rate;
-          hoursCompleted += attendance.totalHours;
-          totalHours = attendance.site.shiftHours * days;
+        if (site) {
+          hourlyRate = site.rate[0].rate;
+        }
+
+        if (timesheetData.length !== 0) {
+          for (const attendance of timesheetData) {
+            hoursCompleted += attendance.totalHours;
+            totalHours = attendance.site.shiftHours * days;
+          }
         }
 
         totalAmount = hourlyRate * hoursCompleted;
         currentSiteTimesheet = {
           siteId: currentSiteId,
+          site,
           hourlyRate,
           hoursCompleted,
           totalHours,
@@ -142,7 +158,7 @@ export class TimesheetService {
       const attendanceRepo = this.queryRunner.manager.getRepository(Attendance);
       const userRepo = this.queryRunner.manager.getRepository(User);
       // const rateRepo = this.queryRunner.manager.getRepository(Rate);
-      // const siteRepo = this.queryRunner.manager.getRepository(Site);
+      const siteRepo = this.queryRunner.manager.getRepository(Site);
 
       let startDate: Date;
       let endDate: Date;
@@ -218,21 +234,36 @@ export class TimesheetService {
             .leftJoinAndSelect('attendance.user', 'user')
             .getMany();
 
+          const site = await siteRepo
+            .createQueryBuilder('site')
+            .where({
+              id: siteId,
+            })
+            .leftJoinAndSelect('site.rate', 'rate')
+            .andWhere('rate.role = :role', { role: user.role })
+            .getOne();
+
           let hourlyRate: number = 0;
           let totalHours: number = 0;
           let hoursCompleted: number = 0;
           let totalAmount: number = 0;
           let currentSiteTimesheet: any;
 
-          for (const attendance of timesheetData) {
-            hourlyRate = attendance.site.rate[0].rate;
-            hoursCompleted += attendance.totalHours;
-            totalHours = attendance.site.shiftHours * days;
+          if (site) {
+            hourlyRate = site.rate[0].rate;
+          }
+
+          if (timesheetData.length !== 0) {
+            for (const attendance of timesheetData) {
+              hoursCompleted += attendance.totalHours;
+              totalHours = attendance.site.shiftHours * days;
+            }
           }
 
           totalAmount = hourlyRate * hoursCompleted;
           currentSiteTimesheet = {
             userId: currentUserId,
+            site,
             hourlyRate,
             hoursCompleted,
             totalHours,
@@ -262,26 +293,40 @@ export class TimesheetService {
             .leftJoinAndSelect('attendance.user', 'user')
             .getMany();
 
+          const site = await siteRepo
+            .createQueryBuilder('site')
+            .where({
+              id: siteId,
+            })
+            .leftJoinAndSelect('site.rate', 'rate')
+            .andWhere('rate.role = :role', { role })
+            .getOne();
+
           let hourlyRate: number = 0;
           let totalHours: number = 0;
           let hoursCompleted: number = 0;
           let totalAmount: number = 0;
           let currentSiteTimesheet: any;
 
-          const uniqueUserIds = new Set(
-            timesheetData.map((attendance) => attendance.user.id),
-          );
-          const totalUniqueUsers = uniqueUserIds.size;
-
-          for (const attendance of timesheetData) {
-            hourlyRate = attendance.site.rate[0].rate;
-            hoursCompleted += attendance.totalHours;
-            totalHours = attendance.site.rate[0].rate * days * totalUniqueUsers; //the totalHours will result less in case of role because site has limited shit hours and roles accumlative hours will exceed them because of number of employees
+          if (site) {
+            hourlyRate = site.rate[0].rate;
+          }
+          if (timesheetData.length !== 0) {
+            const uniqueUserIds = new Set(
+              timesheetData.map((attendance) => attendance.user.id),
+            );
+            const totalUniqueUsers = uniqueUserIds.size;
+            for (const attendance of timesheetData) {
+              hoursCompleted += attendance.totalHours;
+              totalHours =
+                attendance.site.rate[0].rate * days * totalUniqueUsers; //the totalHours will result less in case of role because site has limited shit hours and roles accumlative hours will exceed them because of number of employees
+            }
           }
 
           totalAmount = hourlyRate * hoursCompleted;
           currentSiteTimesheet = {
             role,
+            site,
             hourlyRate,
             hoursCompleted,
             totalHours,
