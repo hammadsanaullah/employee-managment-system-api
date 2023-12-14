@@ -101,7 +101,7 @@ export class TimesheetService {
           .leftJoinAndSelect('attendance.user', 'user')
           .getMany();
 
-        const site = await siteRepo
+        let site = await siteRepo
           .createQueryBuilder('site')
           .where({
             id: currentSiteId,
@@ -127,6 +127,13 @@ export class TimesheetService {
             totalHours = attendance.site.shiftHours * days;
           }
         }
+
+        site = await siteRepo
+          .createQueryBuilder('site')
+          .where({
+            id: currentSiteId,
+          })
+          .getOne();
 
         totalAmount = hourlyRate * hoursCompleted;
         currentSiteTimesheet = {
