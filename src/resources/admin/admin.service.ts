@@ -186,6 +186,11 @@ export class AdminService {
       });
 
       if (rest.role === 'SUPERVISOR' && rest.password) {
+        if (!rest.email) {
+          throw new BadRequestException(
+            'Email must be provided for role supervisor!',
+          );
+        }
         const hashedPassword = await Crypt.hashString(rest.password);
         await adminRepo.save({
           name: rest.firstName + ' ' + rest.lastName,

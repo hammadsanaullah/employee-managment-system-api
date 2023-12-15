@@ -8,6 +8,7 @@ import { SiteModule } from './site/site.module';
 import { RateModule } from './rate/rate.module';
 import { AttendanceModule } from './attendance/attendance.module';
 import { TimesheetModule } from './timesheet/timesheet.module';
+import { RoleModule } from './role/role.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { TimesheetModule } from './timesheet/timesheet.module';
     RateModule,
     AttendanceModule,
     TimesheetModule,
+    RoleModule,
   ],
 })
 export class ResourcesModule {}

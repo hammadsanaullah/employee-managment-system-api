@@ -11,29 +11,31 @@ import {
   Length,
 } from 'class-validator';
 import { Company } from '../../../utils/constants';
+import { IsDateFormat } from '../../../shared/common/is-date-format.decorator';
 
 export class UpdateEmployeeDto {
   @ApiProperty({ type: 'string', format: 'binary', required: false })
+  @IsOptional()
   picture: Express.Multer.File;
 
   @ApiProperty({ required: false })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   employeeCode: string;
 
   @ApiProperty({ required: false })
-  @IsNotEmpty()
+  @IsOptional()
   @IsString()
   barCode: string;
 
   @ApiProperty({ required: false })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   firstName: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   @IsString()
-  @IsNotEmpty()
+  @IsOptional()
   lastName: string;
 
   @ApiProperty({ required: false })
@@ -42,10 +44,10 @@ export class UpdateEmployeeDto {
   @IsEmail()
   email: string;
 
-  @ApiProperty({ required: true })
+  @ApiProperty({ required: false })
   @IsString()
   // @IsPhoneNumber()
-  @IsNotEmpty()
+  @IsOptional()
   phoneNumber: string;
 
   //   @ApiProperty()
@@ -58,12 +60,12 @@ export class UpdateEmployeeDto {
   //   @IsNumber()
   //   locationId: number;
 
-  @ApiProperty({ required: true })
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   noOfLeaves: number;
 
-  @ApiProperty({ required: true })
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsString()
   role: string;
 
@@ -72,8 +74,38 @@ export class UpdateEmployeeDto {
   @IsString()
   password: string;
 
-  @ApiProperty({ required: true })
-  @IsNotEmpty()
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  passportNumber: string;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
+  @IsString()
+  emirateId: string;
+
+  @ApiProperty({
+    required: false,
+    type: Date,
+    example: '2021-01-01T00:00:00.000Z',
+    default: '2021-01-01T00:00:00.000Z',
+  })
+  @IsOptional()
+  @IsDateFormat()
+  passportExpiry: Date;
+
+  @ApiProperty({
+    required: false,
+    type: Date,
+    example: '2021-01-01T00:00:00.000Z',
+    default: '2021-01-01T00:00:00.000Z',
+  })
+  @IsOptional()
+  @IsDateFormat()
+  visaExpiry: Date;
+
+  @ApiProperty({ required: false })
+  @IsOptional()
   @IsIn([Company.INTERNAL, Company.EXTERNAL], {
     message: 'Company must be either "INTERNAL", "EXTERNAL"',
   })

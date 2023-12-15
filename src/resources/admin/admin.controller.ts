@@ -34,8 +34,8 @@ export class AdminController {
   }
 
   @Post('create-new-employee')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('picture'))
   @ApiConsumes('multipart/form-data')
   createNewEmployee(
@@ -47,17 +47,17 @@ export class AdminController {
   }
 
   @Patch('update-employee/:employeeId')
-  @UseGuards(JwtAuthGuard)
-  @ApiBearerAuth()
+  // @UseGuards(JwtAuthGuard)
+  // @ApiBearerAuth()
   @UseInterceptors(FileInterceptor('picture'))
   @ApiConsumes('multipart/form-data')
   updateEmployee(
     @Param('employeeId') employeeId: number,
     @UploadedFile() picture: Express.Multer.File,
-    @Body() createEmployeeDto: CreateEmployeeDto,
+    @Body() updateEmployeeDto: UpdateEmployeeDto,
   ) {
-    createEmployeeDto.picture = picture;
-    return this.adminService.updateEmployee(employeeId, createEmployeeDto);
+    updateEmployeeDto.picture = picture;
+    return this.adminService.updateEmployee(employeeId, updateEmployeeDto);
   }
 
   @Delete('employee/:id')

@@ -1,3 +1,4 @@
+import { IsDateFormat } from '../../../shared/common/is-date-format.decorator';
 import {
   Entity,
   Column,
@@ -39,6 +40,20 @@ export class User extends EntityBase {
 
   @Column()
   role: string;
+
+  @Column({ nullable: true })
+  passportNumber: string;
+
+  @Column({ nullable: true })
+  emirateId: string;
+
+  @Column({ nullable: true })
+  @IsDateFormat()
+  passportExpiry: Date;
+
+  @Column({ nullable: true })
+  @IsDateFormat()
+  visaExpiry: Date;
 
   @Column()
   company: string;
