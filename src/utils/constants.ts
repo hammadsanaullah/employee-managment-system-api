@@ -6,6 +6,7 @@ import { Timesheet } from '../resources/timesheet/entities/timesheet.entity';
 import { Rate } from '../resources/rate/entities/rate.entity';
 import { Attendance } from '../resources/attendance/entities/attendance.entity';
 import { Site } from '../resources/site/entities/site.entity';
+import { Role } from '../resources/role/entities/role.entity';
 config();
 
 export const COMMON_MESSAGE = {
@@ -138,7 +139,7 @@ export const METADATA_CONSTRUCTOR = (
   };
 };
 
-export const TypeORMEntities = [User, Admin, Timesheet, Rate, Site, Attendance];
+export const TypeORMEntities = [User, Admin, Timesheet, Rate, Site, Attendance, Role];
 
 export const CRYPTER_SECRET = process.env.CRYPTER_SECRET;
 
