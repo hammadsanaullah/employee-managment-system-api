@@ -19,7 +19,7 @@ export class AttendanceService {
   logger = new Logger(AttendanceService.name);
 
   async create(createAttendanceDto: CreateAttendanceDto): Promise<ResponseDto> {
-    const { barCode, siteId, shiftTime } = createAttendanceDto;
+    const { barCode, siteId, shiftTime, reason } = createAttendanceDto;
     const queryRunner = this.queryRunner.createQueryRunner();
     await queryRunner.connect();
     try {
@@ -42,6 +42,7 @@ export class AttendanceService {
         userId: user.id,
         siteId,
         shiftTime,
+        reason
       });
 
       const attendance = await attendanceRepo
@@ -73,7 +74,7 @@ export class AttendanceService {
     barCode: string,
     checkoutDto: CheckoutDto,
   ): Promise<ResponseDto> {
-    const { hours } = checkoutDto;
+    const { hours, reason } = checkoutDto;
     const queryRunner = this.queryRunner.createQueryRunner();
     await queryRunner.connect();
     try {
@@ -91,7 +92,7 @@ export class AttendanceService {
       if (exists) {
         await attendanceRepo.update(
           { id: exists.id },
-          { shiftEnd: true, totalHours: hours },
+          { shiftEnd: true, totalHours: hours, reason },
         );
         await userRepo.update({ id: user.id }, { checkedIn: false });
       } else {

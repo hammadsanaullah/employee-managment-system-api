@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CheckoutDto {
   @ApiProperty({
@@ -8,4 +8,11 @@ export class CheckoutDto {
   @IsNumber()
   @IsNotEmpty()
   hours: number;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  reason: string;
 }

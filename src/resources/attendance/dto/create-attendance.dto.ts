@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsArray, IsNotEmpty, IsNumber, IsString } from 'class-validator';
+import { IsArray, IsNotEmpty, IsNumber, IsOptional, IsString } from 'class-validator';
 
 export class CreateAttendanceDto {
   @ApiProperty({
@@ -23,4 +23,11 @@ export class CreateAttendanceDto {
   @IsString()
   @IsNotEmpty()
   barCode: string;
+
+  @ApiProperty({
+    required: false,
+  })
+  @IsString()
+  @IsOptional()
+  reason: string;
 }

@@ -37,4 +37,7 @@ export class Attendance extends EntityBase {
 
   @Column({ default: false })
   shiftEnd: boolean;
+
+  @Column({ nullable: true })
+  reason: string;
 }
