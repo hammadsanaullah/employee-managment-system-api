@@ -112,10 +112,9 @@ export class AdminService {
   }
 
   async signIn(signInDto: SignInAdminDto): Promise<ResponseDto> {
-    const queryRunner = this.queryRunner.createQueryRunner();
     try {
       const { username, password } = signInDto;
-      const adminRepo = queryRunner.manager.getRepository(Admin);
+      const adminRepo = this.queryRunner.manager.getRepository(Admin);
 
       const admin = await adminRepo
         .createQueryBuilder('admin')
