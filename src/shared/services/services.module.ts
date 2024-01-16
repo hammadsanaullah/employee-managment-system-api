@@ -8,8 +8,9 @@ import { PasswordHelperService } from './password-helper/password-helper.service
 import { HttpModule } from '@nestjs/axios';
 import { ScheduledJobsService } from './scheduled-jobs/scheduled-jobs.service';
 import { CloudinaryService } from './cloudinary/cloudinary.service';
+import { ScheduleModule } from '@nestjs/schedule';
 @Module({
-  imports: [HttpModule],
+  imports: [HttpModule, ScheduleModule.forRoot()],
   providers: [
     QueryRunnerService,
     // CrypterService,

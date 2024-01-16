@@ -139,7 +139,15 @@ export const METADATA_CONSTRUCTOR = (
   };
 };
 
-export const TypeORMEntities = [User, Admin, Timesheet, Rate, Site, Attendance, Role];
+export const TypeORMEntities = [
+  User,
+  Admin,
+  Timesheet,
+  Rate,
+  Site,
+  Attendance,
+  Role,
+];
 
 export const CRYPTER_SECRET = process.env.CRYPTER_SECRET;
 

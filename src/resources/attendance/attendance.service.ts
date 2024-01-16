@@ -42,7 +42,7 @@ export class AttendanceService {
         userId: user.id,
         siteId,
         shiftTime,
-        reason
+        reason,
       });
 
       const attendance = await attendanceRepo

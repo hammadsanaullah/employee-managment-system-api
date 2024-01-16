@@ -20,7 +20,6 @@ export class ScheduledJobsService {
     await queryRunner.connect();
     try {
       await queryRunner.startTransaction();
-
       const attendanceRepo = this.queryRunner.manager.getRepository(Attendance);
       const userRepo = this.queryRunner.manager.getRepository(User);
       const activeSessions = await attendanceRepo

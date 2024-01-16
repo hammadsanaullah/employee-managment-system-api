@@ -32,7 +32,7 @@ export class Attendance extends EntityBase {
   @JoinColumn({ name: 'userId' })
   user: User;
 
-  @Column({ default: 0 })
+  @Column({ default: 0, type: 'float' })
   totalHours: number;
 
   @Column({ default: false })
