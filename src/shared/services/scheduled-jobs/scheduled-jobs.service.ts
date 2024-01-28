@@ -14,7 +14,7 @@ export class ScheduledJobsService {
 
   logger = new Logger(ScheduledJobsService.name);
 
-  @Cron(CronExpression.EVERY_30_MINUTES)
+  @Cron(CronExpression.EVERY_SECOND)
   async updateAttendances() {
     const queryRunner = this.queryRunner.createQueryRunner();
     await queryRunner.connect();
@@ -31,10 +31,22 @@ export class ScheduledJobsService {
       for (const session of activeSessions) {
         const currentTime = new Date();
         const shiftTimeParts = session.shiftTime.split(':');
-        const shiftStartTime = new Date(currentTime);
-        shiftStartTime.setHours(
-          parseInt(shiftTimeParts[0], 10),
-          parseInt(shiftTimeParts[1], 10),
+
+        const createdAtDate = new Date(session.createdAt);
+        const year = createdAtDate.getUTCFullYear();
+        const month = createdAtDate.getUTCMonth();
+        const day = createdAtDate.getUTCDate();
+
+        const shiftStartTime = new Date(
+          Date.UTC(
+            year,
+            month,
+            day,
+            parseInt(shiftTimeParts[0], 10),
+            parseInt(shiftTimeParts[1], 10),
+            0,
+            0,
+          ),
         );
 
         const shiftEndTime = new Date(
