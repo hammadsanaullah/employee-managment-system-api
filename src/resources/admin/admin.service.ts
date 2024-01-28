@@ -28,6 +28,7 @@ import { User } from '../user/entities/user.entity';
 import { UpdateEmployeeDto } from './dto/update-employee';
 import { CloudinaryService } from '../../shared/services/cloudinary/cloudinary.service';
 import { UploadApiResponse } from 'cloudinary';
+import { CreateMultipleEmployeesDto } from './dto/create-multiple-employee';
 
 @Injectable()
 export class AdminService {
@@ -185,7 +186,7 @@ export class AdminService {
       });
 
       if (rest.role === 'SUPERVISOR' && rest.password) {
-        if (!rest.email) {
+        if (!rest.employeeCode) {
           throw new BadRequestException(
             'Email must be provided for role supervisor!',
           );
@@ -193,10 +194,9 @@ export class AdminService {
         const hashedPassword = await Crypt.hashString(rest.password);
         await adminRepo.save({
           name: rest.firstName + ' ' + rest.lastName,
-          username: user.email,
+          username: user.employeeCode,
           password: hashedPassword,
-          email: rest.email,
-          phoneNumber: rest.phoneNumber,
+          email: rest.employeeCode,
           role: 'SUPERVISOR',
         });
       }
@@ -217,24 +217,56 @@ export class AdminService {
     } catch (error) {
       this.logger.error(error);
       await queryRunner.rollbackTransaction();
-      if (
-        error?.code == '23505' &&
-        error?.detail ===
-          `Key (email)=(${createEmployeeDto.email}) already exists.`
-      ) {
-        throw new ConflictException(
-          ERROR_MESSAGE.ALREADY_EXIST(createEmployeeDto.email),
+
+      throw new InternalServerErrorException(error);
+    } finally {
+      queryRunner.release();
+    }
+  }
+
+  async createMultipleEmployees(
+    createEmployeeDto: CreateMultipleEmployeesDto,
+  ): Promise<ResponseDto> {
+    const queryRunner = this.queryRunner.createQueryRunner();
+    await queryRunner.connect();
+    try {
+      await queryRunner.startTransaction();
+
+      const { company, companyTitle, ...rest } = createEmployeeDto;
+      const userRepo = queryRunner.manager.getRepository(User);
+
+      if (company === Company.INTERNAL && companyTitle) {
+        throw new BadRequestException(
+          "Can't provide companyTitle if employee is INTERNAL",
         );
       }
-      if (
-        error?.code == '23505' &&
-        error?.detail ===
-          `Key (phoneNumber)=(${createEmployeeDto.phoneNumber}) already exists.`
-      ) {
-        throw new ConflictException(
-          ERROR_MESSAGE.ALREADY_EXIST(createEmployeeDto.phoneNumber),
-        );
-      }
+
+      // Assuming picture is not part of CreateMultipleEmployeesDto
+      // Modify accordingly if needed
+
+      const user = await userRepo.save({
+        company,
+        companyTitle,
+        ...rest,
+      });
+
+      const returnUser = await userRepo
+        .createQueryBuilder('user')
+        .where('user.id = :id', { id: user.id })
+        .getOne();
+
+      await queryRunner.commitTransaction();
+
+      return {
+        message: COMMON_MESSAGE.SUCCESSFULLY_CREATED(User.name),
+        data: {
+          returnUser,
+        },
+      };
+    } catch (error) {
+      this.logger.error(error);
+      await queryRunner.rollbackTransaction();
+
       throw new InternalServerErrorException(error);
     } finally {
       queryRunner.release();
