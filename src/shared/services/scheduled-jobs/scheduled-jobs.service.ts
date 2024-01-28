@@ -14,7 +14,7 @@ export class ScheduledJobsService {
 
   logger = new Logger(ScheduledJobsService.name);
 
-  @Cron(CronExpression.EVERY_SECOND)
+  @Cron(CronExpression.EVERY_30_MINUTES)
   async updateAttendances() {
     const queryRunner = this.queryRunner.createQueryRunner();
     await queryRunner.connect();
