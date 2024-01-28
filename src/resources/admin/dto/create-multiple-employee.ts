@@ -3,10 +3,7 @@ import { IsIn, IsOptional, IsString } from 'class-validator';
 import { Company } from '../../../utils/constants';
 import { IsDateFormat } from '../../../shared/common/is-date-format.decorator';
 
-export class CreateEmployeeDto {
-  @ApiProperty({ type: 'string', format: 'binary', required: true })
-  picture: Express.Multer.File;
-
+export class CreateMultipleEmployeesDto {
   @ApiProperty({ required: false })
   @IsOptional()
   @IsString()
@@ -35,11 +32,6 @@ export class CreateEmployeeDto {
   @IsOptional()
   @IsString()
   role: string;
-
-  @ApiProperty({ required: false })
-  @IsOptional()
-  @IsString()
-  password: string;
 
   @ApiProperty({ required: false })
   @IsOptional()
