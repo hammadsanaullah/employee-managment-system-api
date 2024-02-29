@@ -4,14 +4,14 @@ import { IPaginationOptions } from 'nestjs-typeorm-paginate';
 
 export class PaginationDto implements IPaginationOptions {
   constructor() {
-    this.limit = 100; //too set default value
+    this.limit = 10; //too set default value
     this.page = 1; //too set default value
   }
 
   @IsOptional()
   @ApiPropertyOptional({
     required: false,
-    default: 100,
+    default: 10,
     example: 10,
     description: 'items per page',
   })

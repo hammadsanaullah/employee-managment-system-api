@@ -7,13 +7,15 @@ import {
   Param,
   Delete,
   UseGuards,
+  Query,
 } from '@nestjs/common';
 import { AttendanceService } from './attendance.service';
 import { CreateAttendanceDto } from './dto/create-attendance.dto';
 import { UpdateAttendanceDto } from './dto/update-attendance.dto';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { JwtAuthGuard } from '../../shared/guards/jwt.guard';
 import { CheckoutDto } from './dto/checkout.dto';
+import { PaginationDto } from '../../shared/common/pagination.dto';
 
 @ApiTags('attendance')
 @Controller('attendance')
@@ -40,8 +42,10 @@ export class AttendanceController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  findAll() {
-    return this.attendanceService.findAll();
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  findAll(@Query() pagination: PaginationDto) {
+    return this.attendanceService.findAll(pagination);
   }
 
   // @Get(':id')

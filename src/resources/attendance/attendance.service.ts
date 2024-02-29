@@ -12,6 +12,8 @@ import { Attendance } from './entities/attendance.entity';
 import { COMMON_MESSAGE } from '../../utils/constants';
 import { User } from '../user/entities/user.entity';
 import { CheckoutDto } from './dto/checkout.dto';
+import { PaginationDto } from '../../shared/common/pagination.dto';
+import { paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class AttendanceService {
@@ -114,16 +116,19 @@ export class AttendanceService {
     }
   }
 
-  async findAll(): Promise<ResponseDto> {
+  async findAll(pagination: PaginationDto): Promise<ResponseDto> {
     try {
       const userRepo = this.queryRunner.manager.getRepository(User);
-      const users = await userRepo.find({
-        where: { deletedAt: null, checkedIn: false },
-        order: { id: 'DESC' },
-      });
+      const query = userRepo
+        .createQueryBuilder('user')
+        .where('user.deletedAt IS null')
+        .andWhere('user.checkedIn = :status', { status: false })
+        .orderBy('user.id', 'DESC');
+
+      const paginatedUsers = await paginate<User>(query, pagination);
       return {
         message: COMMON_MESSAGE.SUCCESSFULLY_GET(User.name),
-        data: users,
+        data: paginatedUsers,
       };
     } catch (error) {
       this.logger.error(error);

@@ -23,6 +23,8 @@ import { jwtConfig } from '../../config/jwt.config';
 import { SignInDto } from './dto/sign-in.dto';
 import { ResponseDto } from '../../shared/common/response.dto';
 import { ToggleCheckInCheckOutDto } from './dto/toggle-checkin-checkout.dto';
+import { PaginationDto } from '../../shared/common/pagination.dto';
+import { paginate } from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UserService {
@@ -86,17 +88,19 @@ export class UserService {
     }
   }
 
-  async findAll(): Promise<ResponseDto> {
+  async findAll(pagination: PaginationDto): Promise<ResponseDto> {
     try {
       const userRepo = this.queryRunner.manager.getRepository(User);
-      const users = await userRepo.find({
-        where: { deletedAt: null },
-        order: { id: 'DESC' },
-      });
+      const query = userRepo
+        .createQueryBuilder('user')
+        .where('user.deletedAt IS null')
+        .orderBy('user.id', 'DESC');
+
+      const paginatedUsers = await paginate<User>(query, pagination);
 
       return {
         message: COMMON_MESSAGE.SUCCESSFULLY_GET(User.name),
-        data: users,
+        data: paginatedUsers,
       };
     } catch (error) {
       this.logger.error(error);

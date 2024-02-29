@@ -9,14 +9,16 @@ import {
   UseInterceptors,
   UseGuards,
   Request,
+  Query,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+import { ApiBearerAuth, ApiQuery, ApiTags } from '@nestjs/swagger';
 import { SignInDto } from './dto/sign-in.dto';
 import { TransformInterceptor } from '../../shared/common/transform.interceptor';
 import { JwtAuthGuard } from '../../shared/guards/jwt.guard';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ToggleCheckInCheckOutDto } from './dto/toggle-checkin-checkout.dto';
+import { PaginationDto } from '../../shared/common/pagination.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -39,8 +41,10 @@ export class UserController {
   @Get()
   @UseGuards(JwtAuthGuard)
   @ApiBearerAuth()
-  find() {
-    return this.userService.findAll();
+  @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
+  @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
+  find(@Query() pagination: PaginationDto) {
+    return this.userService.findAll(pagination);
   }
 
   @Get('/:id')
