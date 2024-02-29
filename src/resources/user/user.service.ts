@@ -25,6 +25,8 @@ import { ResponseDto } from '../../shared/common/response.dto';
 import { ToggleCheckInCheckOutDto } from './dto/toggle-checkin-checkout.dto';
 import { PaginationDto } from '../../shared/common/pagination.dto';
 import { paginate } from 'nestjs-typeorm-paginate';
+import { SearchDto } from './dto/search.dto';
+import { Brackets } from 'typeorm';
 
 @Injectable()
 export class UserService {
@@ -88,14 +90,45 @@ export class UserService {
     }
   }
 
-  async findAll(pagination: PaginationDto): Promise<ResponseDto> {
+  async findAll(
+    pagination: PaginationDto,
+    searchDto: SearchDto,
+  ): Promise<ResponseDto> {
     try {
       const userRepo = this.queryRunner.manager.getRepository(User);
+      const { search } = searchDto;
+      //firstName, lastName, employeeCode, company
       const query = userRepo
         .createQueryBuilder('user')
         .where('user.deletedAt IS null')
         .orderBy('user.id', 'DESC');
 
+      if (search) {
+        // query.andWhere('user.firstName ')
+
+        query.andWhere(
+          new Brackets((qb) => {
+            qb.where('LOWER(user.firstName) LIKE LOWER(:search)', {
+              search: `%${search}%`,
+            })
+              .orWhere('LOWER(user.lastName) LIKE LOWER(:search)', {
+                search: `%${search}%`,
+              })
+              .orWhere(
+                "LOWER(user.firstName || ' ' || user.lastName) LIKE LOWER(:search)",
+                {
+                  search: `%${search}%`,
+                },
+              )
+              .orWhere('LOWER(user.employeeCode) LIKE LOWER(:search)', {
+                search: `%${search}%`,
+              })
+              .orWhere('LOWER(user.companyTitle) LIKE LOWER(:search)', {
+                search: `%${search}%`,
+              });
+          }),
+        );
+      }
       const paginatedUsers = await paginate<User>(query, pagination);
 
       return {

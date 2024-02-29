@@ -19,6 +19,7 @@ import { JwtAuthGuard } from '../../shared/guards/jwt.guard';
 import { ChangePasswordDto } from './dto/change-password.dto';
 import { ToggleCheckInCheckOutDto } from './dto/toggle-checkin-checkout.dto';
 import { PaginationDto } from '../../shared/common/pagination.dto';
+import { SearchDto } from './dto/search.dto';
 
 @ApiTags('user')
 @Controller('user')
@@ -43,8 +44,8 @@ export class UserController {
   @ApiBearerAuth()
   @ApiQuery({ name: 'page', type: Number, required: false, example: 1 })
   @ApiQuery({ name: 'limit', type: Number, required: false, example: 10 })
-  find(@Query() pagination: PaginationDto) {
-    return this.userService.findAll(pagination);
+  find(@Query() pagination: PaginationDto, @Query() search: SearchDto) {
+    return this.userService.findAll(pagination, search);
   }
 
   @Get('/:id')
