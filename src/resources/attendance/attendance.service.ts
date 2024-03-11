@@ -29,6 +29,8 @@ export class AttendanceService {
       const attendanceRepo = queryRunner.manager.getRepository(Attendance);
       const userRepo = queryRunner.manager.getRepository(User);
 
+      //TODO: add role and rate
+
       // const exists = await attendanceRepo.findOne({
       //   where: { siteId, shiftEnd: false, userId, deletedAt: null },
       // });

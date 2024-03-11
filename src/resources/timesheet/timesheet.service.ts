@@ -80,16 +80,18 @@ export class TimesheetService {
       let timesheet: any[] = [];
       if (!siteIds) {
         siteIds = (
-          await siteRepo.find({
-            where: { deletedAt: null },
-            select: { id: true },
-          })
+          await siteRepo
+            .createQueryBuilder('site')
+            .withDeleted()
+            .select(['site.id'])
+            .getMany()
         ).map((site) => site.id);
       }
 
       for (const currentSiteId of siteIds) {
         const timesheetData = await attendanceRepo
           .createQueryBuilder('attendance')
+          .withDeleted()
           .where({
             userId,
             createdAt: Between(startDate, endDate),
@@ -103,6 +105,7 @@ export class TimesheetService {
 
         let site = await siteRepo
           .createQueryBuilder('site')
+          .withDeleted()
           .where({
             id: currentSiteId,
           })
@@ -130,6 +133,7 @@ export class TimesheetService {
 
         site = await siteRepo
           .createQueryBuilder('site')
+          .withDeleted()
           .where({
             id: currentSiteId,
           })
@@ -230,6 +234,7 @@ export class TimesheetService {
           const user = await userRepo.findOne({ where: { id: currentUserId } });
           const timesheetData = await attendanceRepo
             .createQueryBuilder('attendance')
+            .withDeleted()
             .where({
               userId: currentUserId,
               createdAt: Between(startDate, endDate),
@@ -243,6 +248,7 @@ export class TimesheetService {
 
           const site = await siteRepo
             .createQueryBuilder('site')
+            .withDeleted()
             .where({
               id: siteId,
             })
@@ -290,6 +296,7 @@ export class TimesheetService {
         for (const role of roles) {
           const timesheetData = await attendanceRepo
             .createQueryBuilder('attendance')
+            .withDeleted()
             .where({
               createdAt: Between(startDate, endDate),
               siteId,
@@ -302,6 +309,7 @@ export class TimesheetService {
 
           const site = await siteRepo
             .createQueryBuilder('site')
+            .withDeleted()
             .where({
               id: siteId,
             })
