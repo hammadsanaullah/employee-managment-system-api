@@ -77,7 +77,7 @@ export class TimesheetService {
       //   .andWhere('rate.role = :role', { role: user.role })
       //   .getMany();
 
-      let timesheet: any[] = [];
+      const timesheet: any[] = [];
       if (!siteIds) {
         siteIds = (
           await siteRepo
@@ -113,11 +113,10 @@ export class TimesheetService {
           .andWhere('rate.role = :role', { role: user.role })
           .getOne();
 
-        let hourlyRate: number = 0;
-        let totalHours: number = 0;
-        let hoursCompleted: number = 0;
-        let totalAmount: number = 0;
-        let currentSiteTimesheet: any;
+        let hourlyRate = 0;
+        let totalHours = 0;
+        let hoursCompleted = 0;
+        let totalAmount = 0;
         // let site: any;
 
         if (site) {
@@ -140,7 +139,7 @@ export class TimesheetService {
           .getOne();
 
         totalAmount = hourlyRate * hoursCompleted;
-        currentSiteTimesheet = {
+        const currentSiteTimesheet = {
           siteId: currentSiteId,
           site,
           hourlyRate,
@@ -218,7 +217,7 @@ export class TimesheetService {
       //   .andWhere('rate.role = :role', { role: user.role })
       //   .getMany();
 
-      let timesheet: any[] = [];
+      const timesheet: any[] = [];
 
       if (type == TypeOptions.EMPLOYEE) {
         if (!userIds) {
@@ -256,11 +255,10 @@ export class TimesheetService {
             .andWhere('rate.role = :role', { role: user.role })
             .getOne();
 
-          let hourlyRate: number = 0;
-          let totalHours: number = 0;
-          let hoursCompleted: number = 0;
-          let totalAmount: number = 0;
-          let currentSiteTimesheet: any;
+          let hourlyRate = 0;
+          let totalHours = 0;
+          let hoursCompleted = 0;
+          let totalAmount = 0;
 
           if (site) {
             hourlyRate = site.rate[0].rate;
@@ -274,7 +272,7 @@ export class TimesheetService {
           }
 
           totalAmount = hourlyRate * hoursCompleted;
-          currentSiteTimesheet = {
+          const currentSiteTimesheet = {
             userId: currentUserId,
             site,
             hourlyRate,
@@ -317,11 +315,10 @@ export class TimesheetService {
             .andWhere('rate.role = :role', { role })
             .getOne();
 
-          let hourlyRate: number = 0;
-          let totalHours: number = 0;
-          let hoursCompleted: number = 0;
-          let totalAmount: number = 0;
-          let currentSiteTimesheet: any;
+          let hourlyRate = 0;
+          let totalHours = 0;
+          let hoursCompleted = 0;
+          let totalAmount = 0;
 
           if (site) {
             hourlyRate = site.rate[0].rate;
@@ -339,7 +336,7 @@ export class TimesheetService {
           }
 
           totalAmount = hourlyRate * hoursCompleted;
-          currentSiteTimesheet = {
+          const currentSiteTimesheet = {
             role,
             site,
             hourlyRate,

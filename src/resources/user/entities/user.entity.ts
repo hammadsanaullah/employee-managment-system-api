@@ -24,7 +24,7 @@ export class User extends EntityBase {
   @Column()
   barCode: string;
 
-  @Column()
+  @Column({ unique: true })
   employeeCode: string;
 
   @Column({ nullable: true })
@@ -45,7 +45,7 @@ export class User extends EntityBase {
   @OneToMany(() => Attendance, (attendance) => attendance.user)
   attendance: Attendance[];
 
-  @Column({ nullable: true })
+  @Column({ unique: true })
   emirateId: string;
 
   @Column({ nullable: true })

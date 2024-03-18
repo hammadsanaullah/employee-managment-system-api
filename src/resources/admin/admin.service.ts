@@ -169,11 +169,11 @@ export class AdminService {
       const userRepo = queryRunner.manager.getRepository(User);
       const adminRepo = queryRunner.manager.getRepository(Admin);
 
-      if (company === Company.INTERNAL && companyTitle) {
-        throw new BadRequestException(
-          "Can't provide companyTitle if employee is INTERNAL",
-        );
-      }
+      // if (company === Company.INTERNAL && companyTitle) {
+      //   throw new BadRequestException(
+      //     "Can't provide companyTitle if employee is INTERNAL",
+      //   );
+      // }
       const result = (await this.cloudinaryService.upload(
         picture,
       )) as UploadApiResponse;
@@ -215,6 +215,7 @@ export class AdminService {
         },
       };
     } catch (error) {
+      console.log(error.code);
       this.logger.error(error);
       await queryRunner.rollbackTransaction();
 
@@ -235,11 +236,11 @@ export class AdminService {
       const { company, companyTitle, ...rest } = createEmployeeDto;
       const userRepo = queryRunner.manager.getRepository(User);
 
-      if (company === Company.INTERNAL && companyTitle) {
-        throw new BadRequestException(
-          "Can't provide companyTitle if employee is INTERNAL",
-        );
-      }
+      // if (company === Company.INTERNAL && companyTitle) {
+      //   throw new BadRequestException(
+      //     "Can't provide companyTitle if employee is INTERNAL",
+      //   );
+      // }
 
       // Assuming picture is not part of CreateMultipleEmployeesDto
       // Modify accordingly if needed
@@ -285,11 +286,11 @@ export class AdminService {
       const userRepo = queryRunner.manager.getRepository(User);
       const adminRepo = queryRunner.manager.getRepository(Admin);
 
-      if (company === Company.INTERNAL && companyTitle) {
-        throw new BadRequestException(
-          "Can't provide companyTitle if employee is INTERNAL",
-        );
-      }
+      // if (company === Company.INTERNAL && companyTitle) {
+      //   throw new BadRequestException(
+      //     "Can't provide companyTitle if employee is INTERNAL",
+      //   );
+      // }
 
       const exist = await userRepo.findOne({
         where: { id: employeeId, deletedAt: null },
