@@ -88,6 +88,10 @@ export class TimesheetService {
         ).map((site) => site.id);
       }
 
+      if (siteIds && !Array.isArray(siteIds)) {
+        siteIds = [siteIds];
+      }
+
       for (const currentSiteId of siteIds) {
         const timesheetData = await attendanceRepo
           .createQueryBuilder('attendance')
