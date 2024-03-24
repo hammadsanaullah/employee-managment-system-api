@@ -33,11 +33,11 @@ export class TimesheetController {
     return this.timesheetService.timesheetByEmployee(timesheetDto);
   }
 
-  // @Get('get-timesheet-by-site')
-  // //Do this, data isn't correct
-  // timesheetBySite(@Query() timesheetSiteDto: TimesheetSiteDto) {
-  //   return this.timesheetService.timesheetBySite(timesheetSiteDto);
-  // }
+  @Get('get-timesheet-by-site')
+  //Do this, data isn't correct
+  timesheetBySite(@Query() timesheetSiteDto: TimesheetSiteDto) {
+    return this.timesheetService.timesheetBySite(timesheetSiteDto);
+  }
 
   // @Get(':id')
   // findOne(@Param('id') id: string) {

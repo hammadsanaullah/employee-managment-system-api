@@ -45,6 +45,7 @@ export class Seed implements Seeder {
           barCode: 'barCode1',
           employeeCode: 'employeeCode1',
           noOfLeaves: 10,
+          emirateId: '1',
           company: 'INTERNAL',
         },
         {
@@ -56,6 +57,7 @@ export class Seed implements Seeder {
           barCode: 'barCode2',
           employeeCode: 'employeeCode2',
           noOfLeaves: 10,
+          emirateId: '2',
           company: 'INTERNAL',
         },
         {
@@ -67,6 +69,7 @@ export class Seed implements Seeder {
           barCode: 'barCode3',
           employeeCode: 'employeeCode3',
           noOfLeaves: 10,
+          emirateId: '3',
           company: 'INTERNAL',
         },
       ];
@@ -92,11 +95,7 @@ export class Seed implements Seeder {
         },
       ];
 
-      const uniqueRateAttributes = [
-        { role: 'Welder', rate: 10 },
-        { role: 'Builder', rate: 20 },
-        { role: 'Fabricator', rate: 30 },
-      ];
+      const uniqueRateAttributes = [{ rate: 10 }, { rate: 20 }, { rate: 30 }];
 
       for (let i = 0; i < 3; i++) {
         const user = await userRepo.save({
@@ -109,7 +108,6 @@ export class Seed implements Seeder {
 
         await rateRepo.save({
           ...uniqueRateAttributes[i],
-          siteId: site.id,
         });
       }
     } catch (error) {

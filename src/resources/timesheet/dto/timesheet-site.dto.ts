@@ -17,23 +17,23 @@ export class TimesheetSiteDto {
   @IsNotEmpty()
   siteId: number;
 
-  @ApiProperty({
-    required: false,
-    type: [Number],
-  })
-  // @IsArray()
-  @IsOptional()
-  // @IsNumber({}, { each: true })
-  userIds: number[];
+  // @ApiProperty({
+  //   required: false,
+  //   type: [Number],
+  // })
+  // // @IsArray()
+  // @IsOptional()
+  // // @IsNumber({}, { each: true })
+  // userIds: number[];
 
-  @ApiProperty({
-    required: false,
-    type: [String],
-  })
-  // @IsArray()
-  @IsOptional()
-  // @IsNumber({}, { each: true })
-  roles: string[];
+  // @ApiProperty({
+  //   required: false,
+  //   type: [String],
+  // })
+  // // @IsArray()
+  // @IsOptional()
+  // // @IsNumber({}, { each: true })
+  // roles: string[];
 
   @ApiProperty({
     required: true,
