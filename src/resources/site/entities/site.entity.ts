@@ -27,9 +27,6 @@ export class Site extends EntityBase {
   @Column()
   shiftHours: number;
 
-  @OneToMany(() => Rate, (rate) => rate.site)
-  rate: Rate[];
-
   @OneToMany(() => Attendance, (attendance) => attendance.site)
   attendance: Attendance[];
 }

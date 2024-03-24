@@ -14,16 +14,6 @@ export class Rate extends EntityBase {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  role: string;
-
   @Column({ type: 'float' })
   rate: number;
-
-  @Column()
-  siteId: number;
-
-  @ManyToOne(() => Site, (site) => site.rate)
-  @JoinColumn({ name: 'siteId' })
-  site: Site;
 }

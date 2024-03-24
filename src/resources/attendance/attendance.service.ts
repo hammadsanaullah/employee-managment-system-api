@@ -21,7 +21,8 @@ export class AttendanceService {
   logger = new Logger(AttendanceService.name);
 
   async create(createAttendanceDto: CreateAttendanceDto): Promise<ResponseDto> {
-    const { barCode, siteId, shiftTime, reason } = createAttendanceDto;
+    const { barCode, siteId, shiftTime, reason, role, rate } =
+      createAttendanceDto;
     const queryRunner = this.queryRunner.createQueryRunner();
     await queryRunner.connect();
     try {
@@ -47,6 +48,8 @@ export class AttendanceService {
         siteId,
         shiftTime,
         reason,
+        role,
+        rate,
       });
 
       const attendance = await attendanceRepo

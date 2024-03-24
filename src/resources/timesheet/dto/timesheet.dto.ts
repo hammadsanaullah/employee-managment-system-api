@@ -16,13 +16,12 @@ export class TimesheetDto {
   userId: number;
 
   @ApiProperty({
-    required: false,
-    type: [Number],
+    required: true,
   })
   // @IsArray()
-  @IsOptional()
+  @IsNotEmpty()
   // @IsNumber({}, { each: true })
-  siteIds: number[];
+  siteId: number;
 
   @ApiProperty({
     required: true,

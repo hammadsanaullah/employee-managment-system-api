@@ -21,25 +21,25 @@ export class RateService {
     const queryRunner = this.queryRunner.createQueryRunner();
     await queryRunner.connect();
     try {
+      const { rate } = createRateDto;
       await queryRunner.startTransaction();
       const rateRepo = queryRunner.manager.getRepository(Rate);
       const exists = await rateRepo.findOne({
         where: {
-          siteId: createRateDto.siteId,
-          role: createRateDto.role,
+          rate,
           deletedAt: null,
         },
       });
       if (exists) {
         throw new ConflictException(ERROR_MESSAGE.ALREADY_EXIST(Rate.name));
       }
-      const rate = await rateRepo.save({ ...createRateDto });
+      const savedRate = await rateRepo.save({ ...createRateDto });
 
       await queryRunner.commitTransaction();
 
       return {
         message: COMMON_MESSAGE.SUCCESSFULLY_CREATED(Rate.name),
-        data: rate,
+        data: savedRate,
       };
     } catch (error) {
       this.logger.error(error);

@@ -40,4 +40,10 @@ export class Attendance extends EntityBase {
 
   @Column({ nullable: true })
   reason: string;
+
+  @Column()
+  role: string;
+
+  @Column()
+  rate: number;
 }

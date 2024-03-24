@@ -36,4 +36,18 @@ export class CreateAttendanceDto {
   @IsString()
   @IsOptional()
   reason: string;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsString()
+  @IsNotEmpty()
+  role: string;
+
+  @ApiProperty({
+    required: true,
+  })
+  @IsNumber()
+  @IsNotEmpty()
+  rate: number;
 }
