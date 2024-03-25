@@ -22,7 +22,7 @@ export class TimesheetService {
   logger = new Logger(TimesheetService.name);
 
   async timesheetByEmployee(timesheetDto: TimesheetDto): Promise<ResponseDto> {
-    let { userId, siteId, year, month, week, day } = timesheetDto;
+    const { userId, siteId, year, month, week, day } = timesheetDto;
     try {
       const attendanceRepo = this.queryRunner.manager.getRepository(Attendance);
       const userRepo = this.queryRunner.manager.getRepository(User);
@@ -99,7 +99,7 @@ export class TimesheetService {
   }
 
   async timesheetBySite(timesheetDto: TimesheetSiteDto): Promise<ResponseDto> {
-    let { siteId, type, year, month, week, day } = timesheetDto;
+    const { siteId, type, year, month, week, day } = timesheetDto;
     try {
       const attendanceRepo = this.queryRunner.manager.getRepository(Attendance);
       const userRepo = this.queryRunner.manager.getRepository(User);
@@ -169,6 +169,8 @@ export class TimesheetService {
           })
           .getMany();
 
+        const site = await siteRepo.findOne({ where: { id: siteId } });
+
         const roleHoursMap = new Map();
         const roleRateMap = new Map();
         const roleAmountMap = new Map();
@@ -190,19 +192,20 @@ export class TimesheetService {
           roleAmountMap.set(role, roleAmountMap.get(role) + totalAmount);
         });
 
-        console.log('roleHoursMap: ', roleHoursMap);
-        console.log('roleRateMap: ', roleRateMap);
-        console.log('roleAmountMap', roleAmountMap);
+        timesheet = []; // Create an array to store role objects
 
-        const totalHours = Object.fromEntries(roleHoursMap);
-        const totalRate = Object.fromEntries(roleRateMap);
-        const totalAmount = Object.fromEntries(roleAmountMap);
-
-        timesheet = {
-          totalHours,
-          totalRate,
-          totalAmount,
-        };
+        for (const [role, hours] of roleHoursMap.entries()) {
+          const totalRate = roleRateMap.get(role);
+          const totalAmount = roleAmountMap.get(role);
+          const shiftHours = site.shiftHours;
+          timesheet.push({
+            role,
+            totalHours: hours,
+            totalRate,
+            totalAmount,
+            shiftHours,
+          });
+        }
       }
 
       return {
