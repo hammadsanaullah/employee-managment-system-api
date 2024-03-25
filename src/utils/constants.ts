@@ -89,11 +89,12 @@ export const SENDGRID_API_KEY = process.env.SENDGRID_API_KEY;
 
 export const dbConfig: DataSourceOptions = {
   type: 'postgres',
-  host: process.env.TYPE_ORM_DATABASE_HOST,
-  port: +process.env.TYPE_ORM_DATABASE_PORT,
-  username: process.env.TYPE_ORM_DATABASE_USERNAME,
-  password: process.env.TYPE_ORM_DATABASE_PASSWORD,
-  database: process.env.TYPE_ORM_DATABASE_NAME,
+  // host: process.env.TYPE_ORM_DATABASE_HOST,
+  // port: +process.env.TYPE_ORM_DATABASE_PORT,
+  // username: process.env.TYPE_ORM_DATABASE_USERNAME,
+  // password: process.env.TYPE_ORM_DATABASE_PASSWORD,
+  // database: process.env.TYPE_ORM_DATABASE_NAME,
+  url: process.env.TYPE_ORM_DATABASE_URL,
 };
 
 //to be used for non-querybuilder transactions
