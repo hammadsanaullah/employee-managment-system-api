@@ -92,7 +92,7 @@ export class SiteService {
       await queryRunner.startTransaction();
       const siteRepo = queryRunner.manager.getRepository(Site);
 
-      await siteRepo.softDelete(id);
+      await siteRepo.delete(id);
 
       await queryRunner.commitTransaction();
 

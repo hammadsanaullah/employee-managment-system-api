@@ -56,7 +56,6 @@ export class RateService {
       const rates = await rateRepo
         .createQueryBuilder('rate')
         .where('rate.deletedAt IS NULL')
-        .leftJoinAndSelect('rate.site', 'site')
         .getMany();
       // const rates = await rateRepo.find({ where: { deletedAt: null } });
       return {
@@ -102,7 +101,7 @@ export class RateService {
       await queryRunner.startTransaction();
       const rateRepo = queryRunner.manager.getRepository(Rate);
 
-      await rateRepo.softDelete(id);
+      await rateRepo.delete(id);
 
       await queryRunner.commitTransaction();
 

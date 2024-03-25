@@ -74,7 +74,7 @@ export class RoleService {
       await queryRunner.startTransaction();
       const roleRepo = queryRunner.manager.getRepository(Role);
 
-      await roleRepo.softDelete(id);
+      await roleRepo.delete(id);
 
       await queryRunner.commitTransaction();
 
