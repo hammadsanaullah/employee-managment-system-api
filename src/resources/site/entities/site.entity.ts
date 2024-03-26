@@ -15,10 +15,10 @@ export class Site extends EntityBase {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column()
   companyName: string;
 
-  @Column()
+  @Column({ unique: true })
   site: string;
 
   @Column()

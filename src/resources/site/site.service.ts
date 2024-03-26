@@ -38,10 +38,10 @@ export class SiteService {
       if (
         error?.code == '23505' &&
         error?.detail ===
-          `Key (companyName)=(${createSiteDto.companyName}) already exists.`
+          `Key (site)=(${createSiteDto.companyName}) already exists.`
       ) {
         throw new ConflictException(
-          ERROR_MESSAGE.ALREADY_EXIST(createSiteDto.companyName),
+          ERROR_MESSAGE.ALREADY_EXIST(createSiteDto.site),
         );
       }
       throw new InternalServerErrorException(error);
